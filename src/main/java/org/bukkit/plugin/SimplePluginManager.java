@@ -39,6 +39,9 @@ import org.bukkit.util.FileUtil;
  * Handles all plugin management from the Server
  */
 public final class SimplePluginManager implements PluginManager {
+	private final HashMap<String, Long> eventTimes = new HashMap<String, Long>(); 
+    private long eventTime = 0;
+
     private final Server server;
     private final Map<Pattern, PluginLoader> fileAssociations = new HashMap<Pattern, PluginLoader>();
     private final List<Plugin> plugins = new ArrayList<Plugin>();
@@ -331,12 +334,24 @@ public final class SimplePluginManager implements PluginManager {
      * @param event Event details
      */
     public synchronized void callEvent(Event event) {
+        long time = System.nanoTime();
         SortedSet<RegisteredListener> eventListeners = listeners.get(event.getType());
 
         if (eventListeners != null) {
             for (RegisteredListener registration : eventListeners) {
                 try {
+                    String pluginName = registration.getPlugin().getDescription().getName();
+                    Long tmp = eventTimes.get(pluginName);
+                    long pluginTime;
+                    if (tmp == null) {
+                        pluginTime = 0;
+                    } else {
+                        pluginTime = tmp;
+                    }
+                    long time2 = System.nanoTime();
                     registration.callEvent(event);
+                    pluginTime += System.nanoTime() - time2;
+                    eventTimes.put(pluginName, pluginTime);
                 } catch (AuthorNagException ex) {
                     Plugin plugin = registration.getPlugin();
 
@@ -360,6 +375,7 @@ public final class SimplePluginManager implements PluginManager {
                 }
             }
         }
+        eventTime += System.nanoTime() - time;
     }
 
     /**
@@ -539,5 +555,9 @@ public final class SimplePluginManager implements PluginManager {
 
     public Set<Permission> getPermissions() {
         return new HashSet<Permission>(permissions.values());
+    }
+    
+    public HashMap<String, Long> getEventTime() {
+    	return eventTimes;
     }
 }
