@@ -7,12 +7,18 @@ import com.avaje.ebean.config.ServerConfig;
 import com.avaje.ebeaninternal.api.SpiEbeanServer;
 import com.avaje.ebeaninternal.server.ddl.DdlGenerator;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -34,6 +40,8 @@ public abstract class JavaPlugin implements Plugin {
     private Configuration config = null;
     private boolean naggable = true;
     private EbeanServer ebean = null;
+    private FileConfiguration newConfig = null;
+    private File configFile = null;
 
     public JavaPlugin() {}
 
@@ -99,9 +107,45 @@ public abstract class JavaPlugin implements Plugin {
      * the configuration file will have no values.
      *
      * @return The configuration.
+     * @deprecated See the new 
      */
+    @Deprecated
     public Configuration getConfiguration() {
+        if (config == null) {
+            config = new Configuration(configFile);
+            config.load();
+        }
         return config;
+    }
+    
+    public FileConfiguration getConfig() {
+        if (newConfig == null) {
+            newConfig = YamlConfiguration.loadConfiguration(configFile);
+            
+            InputStream defConfigStream = getResource("config.yml");
+            if (defConfigStream != null) {
+                YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
+                
+                newConfig.setDefaults(defConfig);
+            }
+        }
+        return newConfig;
+    }
+    
+    public void saveConfig() {
+        try {
+            newConfig.save(configFile);
+        } catch (IOException ex) {
+            Logger.getLogger(JavaPlugin.class.getName()).log(Level.SEVERE, "Could not save config to " + configFile, ex);
+        }
+    }
+    
+    public InputStream getResource(String filename) {
+        if (filename == null) {
+            throw new IllegalArgumentException("Filename cannot be null");
+        }
+        
+        return getClassLoader().getResourceAsStream(filename);
     }
 
     /**
@@ -153,8 +197,7 @@ public abstract class JavaPlugin implements Plugin {
             this.description = description;
             this.dataFolder = dataFolder;
             this.classLoader = classLoader;
-            this.config = new Configuration(new File(dataFolder, "config.yml"));
-            this.config.load();
+            this.configFile = new File(dataFolder, "config.yml");
 
             if (description.isDatabaseEnabled()) {
                 ServerConfig db = new ServerConfig();
