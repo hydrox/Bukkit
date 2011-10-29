@@ -39,13 +39,14 @@ public class YamlConfiguration extends FileConfiguration {
         
         serializeValues(output, getValues(false));
         
+        String header = buildHeader();
         String dump = yaml.dump(output);
         
         if (dump.equals(BLANK_CONFIG)) {
             dump = "";
         }
         
-        return buildHeader() + dump;
+        return header + dump;
     }
 
     @Override
@@ -59,6 +60,12 @@ public class YamlConfiguration extends FileConfiguration {
             input = (Map<String, Object>)yaml.load(contents);
         } catch (Throwable ex) {
             throw new InvalidConfigurationException("Specified contents is not a valid Configuration", ex);
+        }
+        
+        String header = parseHeader(contents);
+        
+        if (header.length() > 0) {
+            options().header(header);
         }
         
         deserializeValues(input, this);
@@ -129,20 +136,64 @@ public class YamlConfiguration extends FileConfiguration {
         }
     }
     
+    protected String parseHeader(String input) {
+        String[] lines = input.split("\r?\n", -1);
+        StringBuilder result = new StringBuilder();
+        boolean readingHeader = true;
+        
+        for (int i = 0; (i < lines.length) && (readingHeader); i++) {
+            String line = lines[i];
+            
+            if (line.startsWith(COMMENT_PREFIX)) {
+                if (i > 0) {
+                    result.append("\n");
+                }
+                
+                if (line.length() > COMMENT_PREFIX.length()) {
+                    result.append(line.substring(COMMENT_PREFIX.length()));
+                }
+            } else if (line.length() == 0) {
+                result.append("\n");
+            } else {
+                readingHeader = false;
+            }
+        }
+        
+        return result.toString();
+    }
+    
     protected String buildHeader() {
         String header = options().header();
+        
+        if (options().copyHeader()) {
+            Configuration def = getDefaults();
+            
+            if ((def != null) && (def instanceof FileConfiguration)) {
+                FileConfiguration filedefaults = (FileConfiguration)def;
+                String defaultsHeader = filedefaults.buildHeader();
+                
+                if ((defaultsHeader != null) && (defaultsHeader.length() > 0)) {
+                    return defaultsHeader;
+                }
+            }
+        }
         
         if (header == null) {
             return "";
         }
         
         StringBuilder builder = new StringBuilder();
-        String[] lines = header.split("\r?\n");
+        String[] lines = header.split("\r?\n", -1);
+        boolean startedHeader = false;
         
-        for (int i = 0; i < lines.length; i++) {
-            builder.append(COMMENT_PREFIX);
-            builder.append(lines[i]);
-            builder.append("\n");
+        for (int i = lines.length - 1; i >= 0; i--) {
+            builder.insert(0, "\n");
+            
+            if ((startedHeader) || (lines[i].length() != 0)) {
+                builder.insert(0, lines[i]);
+                builder.insert(0, COMMENT_PREFIX);
+                startedHeader = true;
+            }
         }
         
         return builder.toString();
