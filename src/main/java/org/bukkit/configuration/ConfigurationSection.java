@@ -164,6 +164,17 @@ public interface ConfigurationSection {
      * @return Newly created section
      */
     public ConfigurationSection createSection(String path);
+    
+    /**
+     * Creates a {@link ConfigurationSection} at the specified path, with specified values.
+     * <p>
+     * Any value that was previously set at this path will be overwritten. If the
+     * previous value was itself a {@link ConfigurationSection}, it will be orphaned.
+     *
+     * @param path Path to create the section at.
+     * @return Newly created section
+     */
+    public ConfigurationSection createSection(String path, Map<String, Object> map);
 
     // Primitives
     /**
@@ -389,6 +400,156 @@ public interface ConfigurationSection {
      */
     public boolean isList(String path);
 
+
+    /**
+     * Gets the requested List of String by path.
+     * <p>
+     * If the List does not exist but a default value has been specified, this
+     * will return the default value. If the List does not exist and no default
+     * value was specified, this will return null.
+     * <p>
+     * This method will attempt to cast any values into a String if possible, but may
+     * miss any values out if they are not compatible.
+     *
+     * @param path Path of the List to get.
+     * @return Requested List of String.
+     */
+    public List<String> getStringList(String path);
+
+    /**
+     * Gets the requested List of Integer by path.
+     * <p>
+     * If the List does not exist but a default value has been specified, this
+     * will return the default value. If the List does not exist and no default
+     * value was specified, this will return null.
+     * <p>
+     * This method will attempt to cast any values into a Integer if possible, but may
+     * miss any values out if they are not compatible.
+     *
+     * @param path Path of the List to get.
+     * @return Requested List of Integer.
+     */
+    public List<Integer> getIntegerList(String path);
+
+    /**
+     * Gets the requested List of Boolean by path.
+     * <p>
+     * If the List does not exist but a default value has been specified, this
+     * will return the default value. If the List does not exist and no default
+     * value was specified, this will return null.
+     * <p>
+     * This method will attempt to cast any values into a Boolean if possible, but may
+     * miss any values out if they are not compatible.
+     *
+     * @param path Path of the List to get.
+     * @return Requested List of Boolean.
+     */
+    public List<Boolean> getBooleanList(String path);
+
+    /**
+     * Gets the requested List of Double by path.
+     * <p>
+     * If the List does not exist but a default value has been specified, this
+     * will return the default value. If the List does not exist and no default
+     * value was specified, this will return null.
+     * <p>
+     * This method will attempt to cast any values into a Double if possible, but may
+     * miss any values out if they are not compatible.
+     *
+     * @param path Path of the List to get.
+     * @return Requested List of Double.
+     */
+    public List<Double> getDoubleList(String path);
+
+    /**
+     * Gets the requested List of Float by path.
+     * <p>
+     * If the List does not exist but a default value has been specified, this
+     * will return the default value. If the List does not exist and no default
+     * value was specified, this will return null.
+     * <p>
+     * This method will attempt to cast any values into a Float if possible, but may
+     * miss any values out if they are not compatible.
+     *
+     * @param path Path of the List to get.
+     * @return Requested List of Float.
+     */
+    public List<Float> getFloatList(String path);
+
+    /**
+     * Gets the requested List of Long by path.
+     * <p>
+     * If the List does not exist but a default value has been specified, this
+     * will return the default value. If the List does not exist and no default
+     * value was specified, this will return null.
+     * <p>
+     * This method will attempt to cast any values into a Long if possible, but may
+     * miss any values out if they are not compatible.
+     *
+     * @param path Path of the List to get.
+     * @return Requested List of Long.
+     */
+    public List<Long> getLongList(String path);
+
+    /**
+     * Gets the requested List of Byte by path.
+     * <p>
+     * If the List does not exist but a default value has been specified, this
+     * will return the default value. If the List does not exist and no default
+     * value was specified, this will return null.
+     * <p>
+     * This method will attempt to cast any values into a Byte if possible, but may
+     * miss any values out if they are not compatible.
+     *
+     * @param path Path of the List to get.
+     * @return Requested List of Byte.
+     */
+    public List<Byte> getByteList(String path);
+
+    /**
+     * Gets the requested List of Character by path.
+     * <p>
+     * If the List does not exist but a default value has been specified, this
+     * will return the default value. If the List does not exist and no default
+     * value was specified, this will return null.
+     * <p>
+     * This method will attempt to cast any values into a Character if possible, but may
+     * miss any values out if they are not compatible.
+     *
+     * @param path Path of the List to get.
+     * @return Requested List of Character.
+     */
+    public List<Character> getCharacterList(String path);
+
+    /**
+     * Gets the requested List of Short by path.
+     * <p>
+     * If the List does not exist but a default value has been specified, this
+     * will return the default value. If the List does not exist and no default
+     * value was specified, this will return null.
+     * <p>
+     * This method will attempt to cast any values into a Short if possible, but may
+     * miss any values out if they are not compatible.
+     *
+     * @param path Path of the List to get.
+     * @return Requested List of Short.
+     */
+    public List<Short> getShortList(String path);
+
+    /**
+     * Gets the requested List of Maps by path.
+     * <p>
+     * If the List does not exist but a default value has been specified, this
+     * will return the default value. If the List does not exist and no default
+     * value was specified, this will return null.
+     * <p>
+     * This method will attempt to cast any values into a Map if possible, but may
+     * miss any values out if they are not compatible.
+     *
+     * @param path Path of the List to get.
+     * @return Requested List of Maps.
+     */
+    public List<Map<String, Object>> getMapList(String path);
 
 
     // Bukkit

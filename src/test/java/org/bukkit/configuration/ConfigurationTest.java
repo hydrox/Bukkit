@@ -1,7 +1,6 @@
 package org.bukkit.configuration;
 
 import java.util.LinkedHashMap;
-import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +21,7 @@ public abstract class ConfigurationTest {
         result.put("false-boolean", false);
         result.put("vector", new Vector(12345.67, 64, -12345.6789));
         result.put("list", Arrays.asList(1, 2, 3, 4, 5));
+        result.put("42", "The Answer");
 
         return result;
     }
