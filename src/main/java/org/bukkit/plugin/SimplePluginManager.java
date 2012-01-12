@@ -121,7 +121,7 @@ public final class SimplePluginManager implements PluginManager {
         boolean allFailed = false;
         boolean finalPass = false;
 
-        LinkedList<File> filesList = new LinkedList(Arrays.asList(files));
+        LinkedList<File> filesList = new LinkedList<File>(Arrays.asList(files));
 
         if (!(server.getUpdateFolder().equals(""))) {
             updateDirectory = new File(directory, server.getUpdateFolder());
@@ -288,7 +288,7 @@ public final class SimplePluginManager implements PluginManager {
     }
 
     public void disablePlugins() {
-        for (Plugin plugin: getPlugins()) {
+        for (Plugin plugin : getPlugins()) {
             disablePlugin(plugin);
         }
     }
@@ -349,7 +349,9 @@ public final class SimplePluginManager implements PluginManager {
                         pluginTime = tmp;
                     }
                     long time2 = System.nanoTime();
+                    long start = System.nanoTime();
                     registration.callEvent(event);
+                    registration.getPlugin().incTiming(event.getType(), System.nanoTime() - start);
                     pluginTime += System.nanoTime() - time2;
                     eventTimes.put(pluginName, pluginTime);
                 } catch (AuthorNagException ex) {

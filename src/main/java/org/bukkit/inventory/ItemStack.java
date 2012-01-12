@@ -1,7 +1,6 @@
 package org.bukkit.inventory;
 
 import com.google.common.collect.ImmutableMap;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -13,7 +12,7 @@ import org.bukkit.material.MaterialData;
 /**
  * Represents a stack of items
  */
-public class ItemStack implements Serializable, ConfigurationSerializable {
+public class ItemStack implements ConfigurationSerializable {
     private int type;
     private int amount = 0;
     private MaterialData data = null;
@@ -123,8 +122,9 @@ public class ItemStack implements Serializable, ConfigurationSerializable {
      * @return MaterialData for this item
      */
     public MaterialData getData() {
-        if (Material.getMaterial(getTypeId()).getData() != null) {
-            data = Material.getMaterial(getTypeId()).getNewData((byte) this.durability);
+        Material mat = Material.getMaterial(getTypeId());
+        if (mat != null && mat.getData() != null) {
+            data = mat.getNewData((byte) this.durability);
         }
 
         return data;
@@ -350,16 +350,16 @@ public class ItemStack implements Serializable, ConfigurationSerializable {
     }
 
     public static ItemStack deserialize(Map<String, Object> args) {
-        Material type = Material.getMaterial((String)args.get("type"));
+        Material type = Material.getMaterial((String) args.get("type"));
         short damage = 0;
         int amount = 1;
 
         if (args.containsKey("damage")) {
-            damage = (Short)args.get("damage");
+            damage = (Short) args.get("damage");
         }
 
         if (args.containsKey("amount")) {
-            amount = (Integer)args.get("amount");
+            amount = (Integer) args.get("amount");
         }
 
         ItemStack result = new ItemStack(type, amount, damage);
@@ -368,13 +368,14 @@ public class ItemStack implements Serializable, ConfigurationSerializable {
             Object raw = args.get("enchantments");
 
             if (raw instanceof Map) {
-                Map<Object, Object> map = (Map<Object, Object>)raw;
+                @SuppressWarnings("unchecked")
+                Map<Object, Object> map = (Map<Object, Object>) raw;
 
                 for (Map.Entry<Object, Object> entry : map.entrySet()) {
                     Enchantment enchantment = Enchantment.getByName(entry.getKey().toString());
 
                     if ((enchantment != null) && (entry.getValue() instanceof Integer)) {
-                        result.addEnchantment(enchantment, (Integer)entry.getValue());
+                        result.addEnchantment(enchantment, (Integer) entry.getValue());
                     }
                 }
             }

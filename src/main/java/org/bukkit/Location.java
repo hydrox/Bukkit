@@ -240,10 +240,10 @@ public class Location implements Cloneable {
         z += vec.z;
         return this;
     }
- 
-     /**
+
+    /**
      * Adds the location by a vector.
-     * 
+     *
      * @see Vector
      * @param vec Vector to use
      * @return the same location
@@ -289,10 +289,10 @@ public class Location implements Cloneable {
         z -= vec.z;
         return this;
     }
- 
-     /**
+
+    /**
      * Subtracts the location by a vector.
-     * 
+     *
      * @see Vector
      * @param vec The vector to use
      * @return the same location
@@ -348,7 +348,7 @@ public class Location implements Cloneable {
     }
 
     /**
-     * Get the distance between this location and another.  The value
+     * Get the distance between this location and another. The value
      * of this method is not cached and uses a costly square-root function, so
      * do not repeatedly call this method to get the location's magnitude. NaN
      * will be returned if the inner result of the sqrt() function overflows,
@@ -360,11 +360,7 @@ public class Location implements Cloneable {
      * @throws IllegalArgumentException for differing worlds
      */
     public double distance(Location o) {
-        if (o == null || o.getWorld() != getWorld()) {
-            throw new IllegalArgumentException("Cannot measure distance between worlds or to null");
-        }
-
-        return Math.sqrt(Math.pow(x - o.x, 2) + Math.pow(y - o.y, 2) + Math.pow(z - o.z, 2));
+        return Math.sqrt(distanceSquared(o));
     }
 
     /**
@@ -376,8 +372,12 @@ public class Location implements Cloneable {
      * @throws IllegalArgumentException for differing worlds
      */
     public double distanceSquared(Location o) {
-        if (o == null || o.getWorld() != getWorld()) {
-            throw new IllegalArgumentException("Cannot measure distance between worlds or to null");
+        if (o == null) {
+            throw new IllegalArgumentException("Cannot measure distance to a null location");
+        } else if (o.getWorld() == null || getWorld() == null) {
+            throw new IllegalArgumentException("Cannot measure distance to a null world");
+        } else if (o.getWorld() != getWorld()) {
+            throw new IllegalArgumentException("Cannot measure distance between " + getWorld().getName() + " and " + o.getWorld().getName());
         }
 
         return Math.pow(x - o.x, 2) + Math.pow(y - o.y, 2) + Math.pow(z - o.z, 2);
