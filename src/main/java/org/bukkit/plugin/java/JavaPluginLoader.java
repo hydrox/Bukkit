@@ -37,9 +37,7 @@ import org.yaml.snakeyaml.error.YAMLException;
  */
 public class JavaPluginLoader implements PluginLoader {
     private final Server server;
-    protected final Pattern[] fileFilters = new Pattern[] {
-        Pattern.compile("\\.jar$"),
-    };
+    protected final Pattern[] fileFilters = new Pattern[] { Pattern.compile("\\.jar$"), };
     protected final Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
     protected final Map<String, PluginClassLoader> loaders = new HashMap<String, PluginClassLoader>();
 
@@ -167,7 +165,14 @@ public class JavaPluginLoader implements PluginLoader {
             URL[] urls = new URL[1];
 
             urls[0] = file.toURI().toURL();
-            loader = new PluginClassLoader(this, urls, getClass().getClassLoader());
+
+            if (description.getClassLoaderOf() != null) {
+                loader = loaders.get(description.getClassLoaderOf());
+                loader.addURL(urls[0]);
+            } else {
+                loader = new PluginClassLoader(this, urls, getClass().getClassLoader());
+            }
+
             Class<?> jarClass = Class.forName(description.getMain(), true, loader);
             Class<? extends JavaPlugin> plugin = jarClass.asSubclass(JavaPlugin.class);
 
@@ -763,6 +768,13 @@ public class JavaPluginLoader implements PluginLoader {
                 }
             };
 
+        case ENTITY_CREATE_PORTAL:
+            return new EventExecutor() {
+                public void execute(Listener listener, Event event) {
+                    ((EntityListener) listener).onEntityCreatePortalEvent((EntityCreatePortalEvent) event);
+                }
+            };
+
         case CREATURE_SPAWN:
             return new EventExecutor() {
                 public void execute(Listener listener, Event event) {
@@ -992,7 +1004,7 @@ public class JavaPluginLoader implements PluginLoader {
 
         if (plugin.isEnabled()) {
             server.getPluginManager().callEvent(new PluginDisableEvent(plugin));
-            
+
             JavaPlugin jPlugin = (JavaPlugin) plugin;
             ClassLoader cloader = jPlugin.getClassLoader();
 

@@ -5,7 +5,6 @@ import java.util.Collection;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.matchers.JUnitMatchers.*;
 
 public class StandardMessengerTest {
     public StandardMessenger getMessenger() {
@@ -41,7 +40,7 @@ public class StandardMessengerTest {
         assertFalse(messenger.isOutgoingChannelRegistered(plugin, "foo"));
     }
 
-    @Test(expected=ReservedChannelException.class)
+    @Test(expected = ReservedChannelException.class)
     public void testReservedOutgoingRegistration() {
         Messenger messenger = getMessenger();
         TestPlugin plugin = getPlugin();
@@ -87,7 +86,7 @@ public class StandardMessengerTest {
         assertFalse(listener.hasReceived());
     }
 
-    @Test(expected=ReservedChannelException.class)
+    @Test(expected = ReservedChannelException.class)
     public void testReservedIncomingRegistration() {
         Messenger messenger = getMessenger();
         TestPlugin plugin = getPlugin();
@@ -95,7 +94,7 @@ public class StandardMessengerTest {
         messenger.registerIncomingPluginChannel(plugin, "REGISTER", new TestMessageListener("foo", "bar".getBytes()));
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testDuplicateIncomingRegistration() {
         Messenger messenger = getMessenger();
         TestPlugin plugin = getPlugin();
