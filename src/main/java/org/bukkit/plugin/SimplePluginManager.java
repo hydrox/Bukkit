@@ -335,46 +335,45 @@ public final class SimplePluginManager implements PluginManager {
      */
     public synchronized void callEvent(Event event) {
         long time = System.nanoTime();
-        SortedSet<RegisteredListener> eventListeners = listeners.get(event.getType());
+        for (RegisteredListener registration : getEventListeners(event.getType())) {
+            if(!registration.getPlugin().isEnabled()) {
+                continue;
+            }
 
-        if (eventListeners != null) {
-            for (RegisteredListener registration : eventListeners) {
-                try {
-                    String pluginName = registration.getPlugin().getDescription().getName();
-                    Long tmp = eventTimes.get(pluginName);
-                    long pluginTime;
-                    if (tmp == null) {
-                        pluginTime = 0;
-                    } else {
-                        pluginTime = tmp;
-                    }
-                    long time2 = System.nanoTime();
-                    long start = System.nanoTime();
-                    registration.callEvent(event);
-                    registration.getPlugin().incTiming(event.getType(), System.nanoTime() - start);
-                    pluginTime += System.nanoTime() - time2;
-                    eventTimes.put(pluginName, pluginTime);
-                } catch (AuthorNagException ex) {
-                    Plugin plugin = registration.getPlugin();
-
-                    if (plugin.isNaggable()) {
-                        plugin.setNaggable(false);
-
-                        String author = "<NoAuthorGiven>";
-
-                        if (plugin.getDescription().getAuthors().size() > 0) {
-                            author = plugin.getDescription().getAuthors().get(0);
-                        }
-                        server.getLogger().log(Level.SEVERE, String.format(
-                            "Nag author: '%s' of '%s' about the following: %s",
-                            author,
-                            plugin.getDescription().getName(),
-                            ex.getMessage()
-                        ));
-                    }
-                } catch (Throwable ex) {
-                    server.getLogger().log(Level.SEVERE, "Could not pass event " + event.getType() + " to " + registration.getPlugin().getDescription().getName(), ex);
+            try {
+                String pluginName = registration.getPlugin().getDescription().getName();
+                Long tmp = eventTimes.get(pluginName);
+                long pluginTime;
+                if (tmp == null) {
+                    pluginTime = 0;
+                } else {
+                    pluginTime = tmp;
                 }
+                long start = System.nanoTime();
+                registration.callEvent(event);
+                registration.getPlugin().incTiming(event.getType(), System.nanoTime() - start);
+                pluginTime += System.nanoTime() - start;
+                eventTimes.put(pluginName, pluginTime);
+            } catch (AuthorNagException ex) {
+                Plugin plugin = registration.getPlugin();
+
+                if (plugin.isNaggable()) {
+                    plugin.setNaggable(false);
+
+                    String author = "<NoAuthorGiven>";
+
+                    if (plugin.getDescription().getAuthors().size() > 0) {
+                        author = plugin.getDescription().getAuthors().get(0);
+                    }
+                    server.getLogger().log(Level.SEVERE, String.format(
+                        "Nag author: '%s' of '%s' about the following: %s",
+                        author,
+                        plugin.getDescription().getName(),
+                        ex.getMessage()
+                    ));
+                }
+            } catch (Throwable ex) {
+                server.getLogger().log(Level.SEVERE, "Could not pass event " + event.getType() + " to " + registration.getPlugin().getDescription().getName(), ex);
             }
         }
         eventTime += System.nanoTime() - time;
