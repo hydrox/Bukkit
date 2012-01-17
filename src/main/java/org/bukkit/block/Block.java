@@ -1,9 +1,12 @@
 package org.bukkit.block;
 
+import java.util.Collection;
+
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.Location;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * Represents a block. This is a live object, and only one Block may exist for
@@ -93,6 +96,24 @@ public interface Block {
     byte getLightLevel();
 
     /**
+     * Get the amount of light at this block from the sky.
+     * <p>
+     * Any light given from other sources (such as blocks like torches) will be ignored.
+     *
+     * @return Sky light level
+     */
+    byte getLightFromSky();
+
+    /**
+     * Get the amount of light at this block from nearby blocks.
+     * <p>
+     * Any light given from other sources (such as the sun) will be ignored.
+     *
+     * @return Block light level
+     */
+    byte getLightFromBlocks();
+
+    /**
      * Gets the world which contains this Block
      *
      * @return World containing this block
@@ -125,7 +146,6 @@ public interface Block {
      *
      * @return Location of block
      */
-
     Location getLocation();
 
     /**
@@ -284,4 +304,35 @@ public interface Block {
      * @return reaction
      */
     PistonMoveReaction getPistonMoveReaction();
+
+    /**
+     * Breaks the block and spawns items as if a player had digged it
+     *
+     * @return true if the block was destroyed
+     */
+    boolean breakNaturally();
+
+    /**
+     * Breaks the block and spawns items as if a player had digged it with a specific tool
+     *
+     * @param tool The tool or item in hand used for digging
+     * @return true if the block was destroyed
+     */
+    boolean breakNaturally(ItemStack tool);
+
+    /**
+     * Returns a list of items which would drop by destroying this block
+     *
+     * @return a list of dropped items for this type of block
+     */
+    Collection<ItemStack> getDrops();
+
+    /**
+     * Returns a list of items which would drop by destroying this block with a specific tool
+     *
+     * @param tool The tool or item in hand used for digging
+     * @return a list of dropped items for this type of block
+     */
+    Collection<ItemStack> getDrops(ItemStack tool);
+
 }

@@ -7,6 +7,7 @@ import org.bukkit.event.painting.PaintingBreakEvent;
 /**
  * Handles all events fired in relation to entities
  */
+@Deprecated
 public class EntityListener implements Listener {
     public EntityListener() {}
 
@@ -155,6 +156,13 @@ public class EntityListener implements Listener {
      * @param event Relevant event details
      */
     public void onFoodLevelChange(FoodLevelChangeEvent event) {}
+
+    /**
+     * Called when a LivingEntity shoots a bow firing an arrow
+     *
+     * @param event Relevant event details
+     */
+    public void onEntityShootBow(EntityShootBowEvent event) {}
 
     /**
      * Called when a Slime splits into smaller Slimes upon death

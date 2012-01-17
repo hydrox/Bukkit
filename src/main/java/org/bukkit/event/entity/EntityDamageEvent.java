@@ -3,12 +3,14 @@ package org.bukkit.event.entity;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
 
 /**
  * Stores data for damage events
  */
 @SuppressWarnings("serial")
 public class EntityDamageEvent extends EntityEvent implements Cancellable {
+    private static final HandlerList handlers = new HandlerList();
 
     private int damage;
     private boolean cancelled;
@@ -59,6 +61,15 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
      */
     public DamageCause getCause() {
         return cause;
+    }
+
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
     }
 
     /**
@@ -156,6 +167,18 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
          * Damage: 1
          */
         STARVATION,
+        /**
+         * Damage caused due to an ongoing poison effect
+         *
+         * Damage: 1
+         */
+        POISON,
+        /**
+         * Damage caused by being hit by a damage potion or spell
+         *
+         * Damage: variable
+         */
+        MAGIC,
         /**
          * Custom damage.
          * <p />
