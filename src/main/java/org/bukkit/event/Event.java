@@ -363,6 +363,24 @@ public abstract class Event implements Serializable {
          * @see org.bukkit.event.player.PlayerChangedWorldEvent
          */
         PLAYER_CHANGED_WORLD(Category.PLAYER, PlayerChangedWorldEvent.class),
+        /**
+         * Called when a players level changes
+         *
+         * @see org.bukkit.event.player.PlayerLevelChangeEvent
+         */
+        PLAYER_LEVEL_CHANGE(Category.PLAYER, PlayerLevelChangeEvent.class),
+        /**
+         * Called when a players experience changes naturally
+         *
+         * @see org.bukkit.event.player.PlayerExpChangeEvent
+         */
+        PLAYER_EXP_CHANGE(Category.PLAYER, PlayerExpChangeEvent.class),
+        /**
+         * Called when a player shears an entity
+         *
+         * @see org.bukkit.event.player.PlayerShearEntityEvent
+         */
+        PLAYER_SHEAR_ENTITY(Category.LIVING_ENTITY, PlayerShearEntityEvent.class),
 
         /**
          * BLOCK EVENTS
@@ -727,6 +745,18 @@ public abstract class Event implements Serializable {
          */
         ENTITY_TARGET(Category.LIVING_ENTITY, EntityTargetEvent.class),
         /**
+         * Called when a sheep regrows its wool
+         *
+         * @see org.bukkit.event.entity.SheepRegrowWoolEvent
+         */
+        SHEEP_REGROW_WOOL(Category.LIVING_ENTITY, SheepRegrowWoolEvent.class),
+        /**
+         * Called when a sheep's wool is dyed
+         *
+         * @see org.bukkit.event.entity.SheepDyeWoolEvent
+         */
+        SHEEP_DYE_WOOL(Category.LIVING_ENTITY, SheepDyeWoolEvent.class),
+        /**
          * Called when an entity interacts with a block
          * This event specifically excludes player entities
          *
@@ -752,11 +782,25 @@ public abstract class Event implements Serializable {
          */
         ENTITY_TAME(Category.LIVING_ENTITY, EntityTameEvent.class),
         /**
+         * Called when a LivingEntity changes a block
+         *
+         * This event specifically excludes player entities
+         *
+         * @see org.bukkit.event.entity.EntityChangeBlockEvent
+         */
+        ENTITY_CHANGE_BLOCK(Category.LIVING_ENTITY, EntityChangeBlockEvent.class),
+        /**
          * Called when a {@link Projectile} hits something
          *
          * @see org.bukkit.event.entity.ProjectileHitEvent
          */
         PROJECTILE_HIT(Category.ENTITY, ProjectileHitEvent.class),
+        /**
+         * Called when a splash potion hits an area
+         *
+         * @see org.bukkit.event.entity.PotionSplashEvent
+         */
+        POTION_SPLASH(Category.ENTITY, PotionSplashEvent.class),
         /**
          * Called when a Slime splits into smaller Slimes upon death
          *

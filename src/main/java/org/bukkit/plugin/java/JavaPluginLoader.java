@@ -13,14 +13,13 @@ import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.Validate;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.event.CustomEventListener;
-import org.bukkit.event.Event;
-import org.bukkit.event.Listener;
 import org.bukkit.event.*;
 import org.bukkit.event.block.*;
 import org.bukkit.event.painting.*;
@@ -48,36 +47,13 @@ public class JavaPluginLoader implements PluginLoader {
     }
 
     public Plugin loadPlugin(File file) throws InvalidPluginException, InvalidDescriptionException, UnknownDependencyException {
-        return loadPlugin(file, false);
-    }
-
-    @SuppressWarnings("unchecked")
-    public Plugin loadPlugin(File file, boolean ignoreSoftDependencies) throws InvalidPluginException, InvalidDescriptionException, UnknownDependencyException {
-        JavaPlugin result = null;
-        PluginDescriptionFile description = null;
+        Validate.notNull(file, "File cannot be null");
 
         if (!file.exists()) {
             throw new InvalidPluginException(new FileNotFoundException(String.format("%s does not exist", file.getPath())));
         }
-        try {
-            JarFile jar = new JarFile(file);
-            JarEntry entry = jar.getJarEntry("plugin.yml");
 
-            if (entry == null) {
-                throw new InvalidPluginException(new FileNotFoundException("Jar does not contain plugin.yml"));
-            }
-
-            InputStream stream = jar.getInputStream(entry);
-
-            description = new PluginDescriptionFile(stream);
-
-            stream.close();
-            jar.close();
-        } catch (IOException ex) {
-            throw new InvalidPluginException(ex);
-        } catch (YAMLException ex) {
-            throw new InvalidPluginException(ex);
-        }
+        PluginDescriptionFile description = getPluginDescription(file);
 
         File dataFolder = new File(file.getParentFile(), description.getName());
         File oldDataFolder = getDataFolder(file);
@@ -137,31 +113,8 @@ public class JavaPluginLoader implements PluginLoader {
             }
         }
 
-        if (!ignoreSoftDependencies) {
-            ArrayList<String> softDepend;
-
-            try {
-                softDepend = (ArrayList<String>) description.getSoftDepend();
-                if (softDepend == null) {
-                    softDepend = new ArrayList<String>();
-                }
-            } catch (ClassCastException ex) {
-                throw new InvalidPluginException(ex);
-            }
-
-            for (String pluginName : softDepend) {
-                if (loaders == null) {
-                    throw new UnknownSoftDependencyException(pluginName);
-                }
-                PluginClassLoader current = loaders.get(pluginName);
-
-                if (current == null) {
-                    throw new UnknownSoftDependencyException(pluginName);
-                }
-            }
-        }
-
         PluginClassLoader loader = null;
+        JavaPlugin result = null;
 
         try {
             URL[] urls = new URL[1];
@@ -192,6 +145,10 @@ public class JavaPluginLoader implements PluginLoader {
         return result;
     }
 
+    public Plugin loadPlugin(File file, boolean ignoreSoftDependencies) throws InvalidPluginException, InvalidDescriptionException, UnknownDependencyException {
+        return loadPlugin(file);
+    }
+
     protected File getDataFolder(File file) {
         File dataFolder = null;
 
@@ -210,6 +167,44 @@ public class JavaPluginLoader implements PluginLoader {
         }
 
         return dataFolder;
+    }
+
+    public PluginDescriptionFile getPluginDescription(File file) throws InvalidDescriptionException, InvalidPluginException {
+        Validate.notNull(file, "File cannot be null");
+
+        JarFile jar = null;
+        InputStream stream = null;
+
+        try {
+            jar = new JarFile(file);
+            JarEntry entry = jar.getJarEntry("plugin.yml");
+
+            if (entry == null) {
+                throw new InvalidPluginException(new FileNotFoundException("Jar does not contain plugin.yml"));
+            }
+
+            stream = jar.getInputStream(entry);
+
+            return new PluginDescriptionFile(stream);
+
+        } catch (IOException ex) {
+            throw new InvalidPluginException(ex);
+        } catch (YAMLException ex) {
+            throw new InvalidDescriptionException(ex);
+        } finally {
+            if (jar != null) {
+                try {
+                    jar.close();
+                } catch (IOException e) {
+                }
+            }
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                }
+            }
+        }
     }
 
     public Pattern[] getPluginFileFilters() {
@@ -381,6 +376,13 @@ public class JavaPluginLoader implements PluginLoader {
                 }
             };
 
+        case PLAYER_LEVEL_CHANGE:
+            return new EventExecutor() {
+                public void execute(Listener listener, Event event) {
+                    ((PlayerListener) listener).onPlayerLevelChange((PlayerLevelChangeEvent) event);
+                }
+            };
+
         case INVENTORY_OPEN:
             return new EventExecutor() {
                 public void execute(Listener listener, Event event) {
@@ -469,6 +471,13 @@ public class JavaPluginLoader implements PluginLoader {
             return new EventExecutor() {
                 public void execute(Listener listener, Event event) {
                     ((PlayerListener) listener).onPlayerChangedWorld((PlayerChangedWorldEvent) event);
+                }
+            };
+
+        case PLAYER_EXP_CHANGE:
+            return new EventExecutor() {
+                public void execute(Listener listener, Event event) {
+                    ((PlayerListener) listener).onPlayerExpChange((PlayerExpChangeEvent) event);
                 }
             };
 
@@ -819,6 +828,13 @@ public class JavaPluginLoader implements PluginLoader {
                 }
             };
 
+        case ENTITY_SHOOT_BOW:
+            return new EventExecutor() {
+                public void execute(Listener listener, Event event) {
+                    ((EntityListener) listener).onEntityShootBow((EntityShootBowEvent) event);
+                }
+            };
+
         case PROJECTILE_HIT:
             return new EventExecutor() {
                 public void execute(Listener listener, Event event) {
@@ -974,6 +990,7 @@ public class JavaPluginLoader implements PluginLoader {
     }
 
     public Map<Class<? extends Event>, Set<RegisteredListener>> createRegisteredListeners(Listener listener, final Plugin plugin) {
+        boolean useTimings = server.getPluginManager().useTimings();
         Map<Class<? extends Event>, Set<RegisteredListener>> ret = new HashMap<Class<? extends Event>, Set<RegisteredListener>>();
         Method[] methods;
         try {
@@ -987,20 +1004,21 @@ public class JavaPluginLoader implements PluginLoader {
             final EventHandler eh = method.getAnnotation(EventHandler.class);
             if (eh == null) continue;
             final Class<?> checkClass = method.getParameterTypes()[0];
-            if (!checkClass.isAssignableFrom(eh.event()) || method.getParameterTypes().length != 1) {
+            if (!Event.class.isAssignableFrom(checkClass) || method.getParameterTypes().length != 1) {
                 plugin.getServer().getLogger().severe("Wrong method arguments used for event type registered");
                 continue;
             }
+            final Class<? extends Event> eventClass = checkClass.asSubclass(Event.class);
             method.setAccessible(true);
-            Set<RegisteredListener> eventSet = ret.get(eh.event());
+            Set<RegisteredListener> eventSet = ret.get(eventClass);
             if (eventSet == null) {
                 eventSet = new HashSet<RegisteredListener>();
-                ret.put(eh.event(), eventSet);
+                ret.put(eventClass, eventSet);
             }
-            eventSet.add(new RegisteredListener(listener, new EventExecutor() {
+            EventExecutor executor = new EventExecutor() {
                 public void execute(Listener listener, Event event) throws EventException {
                     try {
-                        if (!checkClass.isAssignableFrom(event.getClass())) {
+                        if (!eventClass.isAssignableFrom(event.getClass())) {
                             throw new EventException("Wrong event type passed to registered method");
                         }
                         method.invoke(listener, event);
@@ -1008,7 +1026,12 @@ public class JavaPluginLoader implements PluginLoader {
                         throw new EventException(t);
                     }
                 }
-            }, eh.priority(), plugin));
+            };
+            if (useTimings) {
+                eventSet.add(new TimedRegisteredListener(listener, executor, eh.priority(), plugin));
+            } else {
+                eventSet.add(new RegisteredListener(listener, executor, eh.priority(), plugin));
+            }
         }
         return ret;
     }
