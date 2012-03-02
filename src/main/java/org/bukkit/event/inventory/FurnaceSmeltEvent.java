@@ -2,25 +2,21 @@ package org.bukkit.event.inventory;
 
 import org.bukkit.block.Block;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.block.BlockEvent;
 import org.bukkit.inventory.ItemStack;
 
 /**
  * Called when an ItemStack is successfully smelted in a furnace.
  */
-@SuppressWarnings("serial")
-public class FurnaceSmeltEvent extends Event implements Cancellable {
+public class FurnaceSmeltEvent extends BlockEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
-    private Block furnace;
-    private ItemStack source;
+    private final ItemStack source;
     private ItemStack result;
     private boolean cancelled;
 
-    public FurnaceSmeltEvent(Block furnace, ItemStack source, ItemStack result) {
-        super(Type.FURNACE_SMELT);
-
-        this.furnace = furnace;
+    public FurnaceSmeltEvent(final Block furnace, final ItemStack source, final ItemStack result) {
+        super(furnace);
         this.source = source;
         this.result = result;
         this.cancelled = false;
@@ -30,9 +26,11 @@ public class FurnaceSmeltEvent extends Event implements Cancellable {
      * Gets the block for the furnace involved in this event
      *
      * @return the block of the furnace
+     * @deprecated In favour of {@link #getBlock()}.
      */
+    @Deprecated
     public Block getFurnace() {
-        return furnace;
+        return getBlock();
     }
 
     /**

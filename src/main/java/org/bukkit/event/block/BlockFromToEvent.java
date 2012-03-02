@@ -6,11 +6,11 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
 /**
- * Represents events with a source block and a destination block, currently only applies to liquid (lava and water).
+ * Represents events with a source block and a destination block, currently only applies to liquid (lava and water)
+ * and teleporting dragon eggs.
  * <p />
  * If a Block From To event is cancelled, the block will not move (the liquid will not flow).
  */
-@SuppressWarnings("serial")
 public class BlockFromToEvent extends BlockEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     protected Block to;
@@ -18,8 +18,15 @@ public class BlockFromToEvent extends BlockEvent implements Cancellable {
     protected boolean cancel;
 
     public BlockFromToEvent(final Block block, final BlockFace face) {
-        super(Type.BLOCK_FROMTO, block);
+        super(block);
         this.face = face;
+        this.cancel = false;
+    }
+
+    public BlockFromToEvent(final Block block, final Block toBlock) {
+        super(block);
+        this.to = toBlock;
+        this.face = BlockFace.SELF;
         this.cancel = false;
     }
 
@@ -39,7 +46,7 @@ public class BlockFromToEvent extends BlockEvent implements Cancellable {
      */
     public Block getToBlock() {
         if (to == null) {
-            to = block.getRelative(face.getModX(), face.getModY(), face.getModZ());
+            to = block.getRelative(face);
         }
         return to;
     }

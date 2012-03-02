@@ -1,19 +1,16 @@
 package org.bukkit.event.server;
 
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.map.MapView;
 
 /**
  * Called when a map is initialized.
  */
-@SuppressWarnings("serial")
 public class MapInitializeEvent extends ServerEvent {
     private static final HandlerList handlers = new HandlerList();
     private final MapView mapView;
 
-    public MapInitializeEvent(MapView mapView) {
-        super(Event.Type.MAP_INITIALIZE);
+    public MapInitializeEvent(final MapView mapView) {
         this.mapView = mapView;
     }
 

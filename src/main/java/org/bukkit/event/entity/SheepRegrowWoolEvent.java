@@ -1,10 +1,9 @@
 package org.bukkit.event.entity;
 
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.Sheep;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
-@SuppressWarnings("serial")
 /**
  * Called when a sheep regrows its wool
  */
@@ -12,8 +11,8 @@ public class SheepRegrowWoolEvent extends EntityEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancel;
 
-    public SheepRegrowWoolEvent(Entity what) {
-        super(Type.SHEEP_REGROW_WOOL, what);
+    public SheepRegrowWoolEvent(final Sheep sheep) {
+        super(sheep);
         this.cancel = false;
     }
 
@@ -23,6 +22,11 @@ public class SheepRegrowWoolEvent extends EntityEvent implements Cancellable {
 
     public void setCancelled(boolean cancel) {
         this.cancel = cancel;
+    }
+
+    @Override
+    public Sheep getEntity() {
+        return (Sheep) entity;
     }
 
     @Override

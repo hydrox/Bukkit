@@ -7,13 +7,12 @@ import org.bukkit.event.HandlerList;
 /**
  * Called when a World is unloaded
  */
-@SuppressWarnings("serial")
 public class WorldUnloadEvent extends WorldEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean isCancelled;
 
-    public WorldUnloadEvent(World world) {
-        super(Type.WORLD_UNLOAD, world);
+    public WorldUnloadEvent(final World world) {
+        super(world);
     }
 
     public boolean isCancelled() {

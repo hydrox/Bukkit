@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.Metadatable;
 
 /**
  * Represents a block. This is a live object, and only one Block may exist for
@@ -14,7 +15,7 @@ import org.bukkit.inventory.ItemStack;
  * to your own handling of it; use block.getState() to get a snapshot state of a
  * block which will not be modified.
  */
-public interface Block {
+public interface Block extends Metadatable {
 
     /**
      * Gets the metadata for this block
@@ -22,18 +23,6 @@ public interface Block {
      * @return block specific metadata
      */
     byte getData();
-
-    /**
-     * @deprecated use {@link #getRelative(BlockFace face)}
-     */
-    @Deprecated
-    Block getFace(BlockFace face);
-
-    /**
-     * @deprecated use {@link #getRelative(BlockFace face, int distance)}
-     */
-    @Deprecated
-    Block getFace(BlockFace face, int distance);
 
     /**
      * Gets the block at the given offsets
@@ -162,6 +151,12 @@ public interface Block {
      */
     void setData(byte data);
 
+    /**
+     * Sets the metadata for this block
+     *
+     * @param data New block specific metadata
+     * @param applyPhysics False to cancel physics from the changed block.
+     */
     void setData(byte data, boolean applyPhysics);
 
     /**
@@ -179,8 +174,23 @@ public interface Block {
      */
     boolean setTypeId(int type);
 
+    /**
+     * Sets the type-id of this block
+     *
+     * @param type Type-Id to change this block to
+     * @param applyPhysics False to cancel physics on the changed block.
+     * @return whether the block was changed
+     */
     boolean setTypeId(int type, boolean applyPhysics);
 
+    /**
+     * Sets the type-id of this block
+     *
+     * @param type Type-Id to change this block to
+     * @param data The data value to change this block to
+     * @param applyPhysics False to cancel physics on the changed block
+     * @return whether the block was changed
+     */
     boolean setTypeIdAndData(int type, byte data, boolean applyPhysics);
 
     /**

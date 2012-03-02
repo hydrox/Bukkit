@@ -80,6 +80,10 @@ public enum ChatColor {
      */
     MAGIC('k', 0x10);
 
+    /**
+     * The special character which prefixes all chat colour codes. Use this if you need to dynamically
+     * convert colour codes from your custom format.
+     */
     public static final char COLOR_CHAR = '\u00A7';
     private static final Pattern STRIP_COLOR_PATTERN = Pattern.compile("(?i)" + String.valueOf(COLOR_CHAR) + "[0-9A-FK]");
 
@@ -96,16 +100,6 @@ public enum ChatColor {
     }
 
     /**
-     * Gets the data value associated with this color
-     *
-     * @return An integer value of this color code
-     * @deprecated Use {@link #getChar()}
-     */
-    public int getCode() {
-        return intCode;
-    }
-
-    /**
      * Gets the char value associated with this color
      *
      * @return A char value of this color code
@@ -117,17 +111,6 @@ public enum ChatColor {
     @Override
     public String toString() {
         return toString;
-    }
-
-    /**
-     * Gets the color represented by the specified color code
-     *
-     * @param code Code to check
-     * @return Associative {@link org.bukkit.ChatColor} with the given code, or null if it doesn't exist
-     * @deprecated Use {@link #getByChar(char)}
-     */
-    public static ChatColor getByCode(final int code) {
-        return BY_ID.get(code);
     }
 
     /**

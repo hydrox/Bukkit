@@ -6,9 +6,8 @@ import org.bukkit.entity.Painting;
 /**
  * Triggered when a painting is removed by an entity
  */
-@SuppressWarnings("serial")
 public class PaintingBreakByEntityEvent extends PaintingBreakEvent {
-    private Entity remover;
+    private final Entity remover;
 
     public PaintingBreakByEntityEvent(final Painting painting, final Entity remover) {
         super(painting, RemoveCause.ENTITY);

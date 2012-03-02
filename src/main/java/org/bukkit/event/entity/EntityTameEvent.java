@@ -1,22 +1,26 @@
 package org.bukkit.event.entity;
 
 import org.bukkit.entity.AnimalTamer;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
 /**
  * Thrown when a LivingEntity is tamed
  */
-@SuppressWarnings("serial")
 public class EntityTameEvent extends EntityEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
-    private AnimalTamer owner;
+    private final AnimalTamer owner;
 
-    public EntityTameEvent(Entity entity, AnimalTamer owner) {
-        super(Type.ENTITY_TAME, entity);
+    public EntityTameEvent(final LivingEntity entity, final AnimalTamer owner) {
+        super(entity);
         this.owner = owner;
+    }
+
+    @Override
+    public LivingEntity getEntity() {
+        return (LivingEntity) entity;
     }
 
     public boolean isCancelled() {

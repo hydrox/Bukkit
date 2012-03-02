@@ -10,14 +10,13 @@ import org.bukkit.event.HandlerList;
  * or the environment. This is not raised if the boat is simply 'removed'
  * due to other means.
  */
-@SuppressWarnings("serial")
 public class VehicleDestroyEvent extends VehicleEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
-    private Entity attacker;
+    private final Entity attacker;
     private boolean cancelled;
 
-    public VehicleDestroyEvent(Vehicle vehicle, Entity attacker) {
-        super(Type.VEHICLE_DESTROY, vehicle);
+    public VehicleDestroyEvent(final Vehicle vehicle, final Entity attacker) {
+        super(vehicle);
         this.attacker = attacker;
     }
 

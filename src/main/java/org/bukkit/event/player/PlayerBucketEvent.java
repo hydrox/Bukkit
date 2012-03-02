@@ -7,17 +7,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.inventory.ItemStack;
 
-@SuppressWarnings("serial")
 public abstract class PlayerBucketEvent extends PlayerEvent implements Cancellable {
-
     private ItemStack itemStack;
     private boolean cancelled = false;
-    private Block blockClicked;
-    private BlockFace blockFace;
-    private Material bucket;
+    private final Block blockClicked;
+    private final BlockFace blockFace;
+    private final Material bucket;
 
-    public PlayerBucketEvent(Type type, Player who, Block blockClicked, BlockFace blockFace, Material bucket, ItemStack itemInHand) {
-        super(type, who);
+    public PlayerBucketEvent(final Player who, final Block blockClicked, final BlockFace blockFace, final Material bucket, final ItemStack itemInHand) {
+        super(who);
         this.blockClicked = blockClicked;
         this.blockFace = blockFace;
         this.itemStack = itemInHand;

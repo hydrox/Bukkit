@@ -3,12 +3,10 @@ package org.bukkit.event.entity;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 
-@SuppressWarnings("serial")
 public class EntityCombustByBlockEvent extends EntityCombustEvent {
+    private final Block combuster;
 
-    private Block combuster;
-
-    public EntityCombustByBlockEvent(Block combuster, Entity combustee, int duration) {
+    public EntityCombustByBlockEvent(final Block combuster, final Entity combustee, final int duration) {
         super(combustee, duration);
         this.combuster = combuster;
     }

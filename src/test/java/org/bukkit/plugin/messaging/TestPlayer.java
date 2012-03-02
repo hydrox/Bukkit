@@ -9,17 +9,24 @@ import java.util.Set;
 import java.util.UUID;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.conversations.Conversation;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Egg;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.InventoryView.Property;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.map.MapView;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
@@ -549,6 +556,10 @@ public class TestPlayer implements Player {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    public void sendMessage(String[] messages) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     public boolean isOnline() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -646,6 +657,86 @@ public class TestPlayer implements Player {
     }
 
     public Collection<PotionEffect> getActivePotionEffects() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public <T extends Projectile> T launchProjectile(Class<? extends T> projectile) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public EntityType getType() {
+        return EntityType.PLAYER;
+    }
+
+    public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public List<MetadataValue> getMetadata(String metadataKey) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean hasMetadata(String metadataKey) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void removeMetadata(String metadataKey, Plugin owningPlugin) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public <T> void playEffect(Location loc, Effect effect, T data) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public InventoryView getOpenInventory() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public InventoryView openInventory(Inventory inventory) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public InventoryView openWorkbench(Location location, boolean force) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void openInventory(InventoryView inventory) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void closeInventory() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public InventoryView openEnchanting(Location location, boolean force) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public ItemStack getItemOnCursor() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setItemOnCursor(ItemStack item) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean setWindowProperty(Property prop, int value) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean isConversing() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void acceptConversationInput(String input) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean beginConversation(Conversation conversation) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void abandonConversation(Conversation conversation) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

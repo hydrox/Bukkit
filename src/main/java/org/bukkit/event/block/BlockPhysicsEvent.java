@@ -8,14 +8,13 @@ import org.bukkit.event.HandlerList;
 /**
  * Thrown when a block physics check is called
  */
-@SuppressWarnings("serial")
 public class BlockPhysicsEvent extends BlockEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private final int changed;
     private boolean cancel = false;
 
     public BlockPhysicsEvent(final Block block, final int changed) {
-        super(Type.BLOCK_PHYSICS, block);
+        super(block);
         this.changed = changed;
     }
 

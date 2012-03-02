@@ -8,15 +8,13 @@ import org.bukkit.event.HandlerList;
 /**
  * This event is fired when the player is almost about to enter the bed.
  */
-@SuppressWarnings("serial")
 public class PlayerBedEnterEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
-
     private boolean cancel = false;
-    private Block bed;
+    private final Block bed;
 
-    public PlayerBedEnterEvent(Player who, Block bed) {
-        super(Type.PLAYER_BED_ENTER, who);
+    public PlayerBedEnterEvent(final Player who, final Block bed) {
+        super(who);
         this.bed = bed;
     }
 

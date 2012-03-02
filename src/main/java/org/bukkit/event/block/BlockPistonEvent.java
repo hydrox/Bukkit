@@ -5,13 +5,12 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.Cancellable;
 
-@SuppressWarnings("serial")
 public abstract class BlockPistonEvent extends BlockEvent implements Cancellable {
     private boolean cancelled;
-    private BlockFace direction;
+    private final BlockFace direction;
 
-    public BlockPistonEvent(Type type, Block block, BlockFace direction) {
-        super(type, block);
+    public BlockPistonEvent(final Block block, final BlockFace direction) {
+        super(block);
         this.direction = direction;
     }
 

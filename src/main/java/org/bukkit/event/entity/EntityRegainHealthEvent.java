@@ -2,22 +2,19 @@ package org.bukkit.event.entity;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
  * Stores data for health-regain events
  */
-@SuppressWarnings("serial")
 public class EntityRegainHealthEvent extends EntityEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
-
     private boolean cancelled;
     private int amount;
-    private RegainReason regainReason;
+    private final RegainReason regainReason;
 
-    public EntityRegainHealthEvent(Entity entity, int amount, RegainReason regainReason) {
-        super(Event.Type.ENTITY_REGAIN_HEALTH, entity);
+    public EntityRegainHealthEvent(final Entity entity, final int amount, final RegainReason regainReason) {
+        super(entity);
         this.amount = amount;
         this.regainReason = regainReason;
     }

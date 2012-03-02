@@ -1,6 +1,7 @@
 package org.bukkit.event.entity;
 
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.Creeper;
+import org.bukkit.entity.LightningStrike;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
@@ -9,24 +10,20 @@ import org.bukkit.event.HandlerList;
  * <p />
  * If a Creeper Power event is cancelled, the Creeper will not be powered.
  */
-@SuppressWarnings("serial")
 public class CreeperPowerEvent extends EntityEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
-
     private boolean canceled;
-    private PowerCause cause;
-    private Entity bolt;
+    private final PowerCause cause;
+    private LightningStrike bolt;
 
-    public CreeperPowerEvent(Entity creeper, Entity bolt, PowerCause cause) {
-        super(Type.CREEPER_POWER, creeper);
+    public CreeperPowerEvent(final Creeper creeper, final LightningStrike bolt, final PowerCause cause) {
+        this(creeper, cause);
         this.bolt = bolt;
-        this.cause = cause;
     }
 
-    public CreeperPowerEvent(Entity creeper, PowerCause cause) {
-        super(Type.CREEPER_POWER, creeper);
+    public CreeperPowerEvent(final Creeper creeper, final PowerCause cause) {
+        super(creeper);
         this.cause = cause;
-        this.bolt = null;
     }
 
     public boolean isCancelled() {
@@ -37,12 +34,17 @@ public class CreeperPowerEvent extends EntityEvent implements Cancellable {
         canceled = cancel;
     }
 
+    @Override
+    public Creeper getEntity() {
+        return (Creeper) entity;
+    }
+
     /**
      * Gets the lightning bolt which is striking the Creeper.
      *
      * @return The Entity for the lightning bolt which is striking the Creeper
      */
-    public Entity getLightning() {
+    public LightningStrike getLightning() {
         return bolt;
     }
 

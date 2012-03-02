@@ -12,7 +12,6 @@ import org.bukkit.inventory.ItemStack;
  * <p />
  * If a Block Place event is cancelled, the block will not be placed.
  */
-@SuppressWarnings("serial")
 public class BlockPlaceEvent extends BlockEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     protected boolean cancel;
@@ -22,8 +21,8 @@ public class BlockPlaceEvent extends BlockEvent implements Cancellable {
     protected ItemStack itemInHand;
     protected Player player;
 
-    public BlockPlaceEvent(Block placedBlock, BlockState replacedBlockState, Block placedAgainst, ItemStack itemInHand, Player thePlayer, boolean canBuild) {
-        super(Type.BLOCK_PLACE, placedBlock);
+    public BlockPlaceEvent(final Block placedBlock, final BlockState replacedBlockState, final Block placedAgainst, final ItemStack itemInHand, final Player thePlayer, final boolean canBuild) {
+        super(placedBlock);
         this.placedAgainst = placedAgainst;
         this.itemInHand = itemInHand;
         this.player = thePlayer;

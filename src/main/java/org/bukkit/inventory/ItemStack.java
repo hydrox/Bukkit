@@ -12,7 +12,7 @@ import org.bukkit.material.MaterialData;
 /**
  * Represents a stack of items
  */
-public class ItemStack implements ConfigurationSerializable {
+public class ItemStack implements Cloneable, ConfigurationSerializable {
     private int type;
     private int amount = 0;
     private MaterialData data = null;
@@ -55,6 +55,16 @@ public class ItemStack implements ConfigurationSerializable {
 
     public ItemStack(final Material type, final int amount, final short damage, final Byte data) {
         this(type.getId(), amount, damage, data);
+    }
+
+    public ItemStack(final ItemStack stack) {
+        this.type = stack.type;
+        this.amount = stack.amount;
+        this.durability = stack.durability;
+        if (stack.data != null) {
+            this.data = stack.data.clone();
+        }
+        enchantments.putAll(stack.enchantments);
     }
 
     /**
@@ -210,10 +220,18 @@ public class ItemStack implements ConfigurationSerializable {
 
     @Override
     public ItemStack clone() {
-        ItemStack result = new ItemStack(type, amount, durability);
-        result.addUnsafeEnchantments(getEnchantments());
+        try {
+            ItemStack itemStack = (ItemStack) super.clone();
 
-        return result;
+            itemStack.enchantments = new HashMap<Enchantment, Integer>(this.enchantments);
+            if (this.data != null) {
+                itemStack.data = this.data.clone();
+            }
+
+            return itemStack;
+        } catch (CloneNotSupportedException e) {
+            throw new Error(e);
+        }
     }
 
     @Override
@@ -360,7 +378,7 @@ public class ItemStack implements ConfigurationSerializable {
         int amount = 1;
 
         if (args.containsKey("damage")) {
-            damage = (Short) args.get("damage");
+            damage = ((Number) args.get("damage")).shortValue();
         }
 
         if (args.containsKey("amount")) {
@@ -373,14 +391,13 @@ public class ItemStack implements ConfigurationSerializable {
             Object raw = args.get("enchantments");
 
             if (raw instanceof Map) {
-                @SuppressWarnings("unchecked")
-                Map<Object, Object> map = (Map<Object, Object>) raw;
+                Map<?, ?> map = (Map<?, ?>) raw;
 
-                for (Map.Entry<Object, Object> entry : map.entrySet()) {
+                for (Map.Entry<?, ?> entry : map.entrySet()) {
                     Enchantment enchantment = Enchantment.getByName(entry.getKey().toString());
 
                     if ((enchantment != null) && (entry.getValue() instanceof Integer)) {
-                        result.addEnchantment(enchantment, (Integer) entry.getValue());
+                        result.addUnsafeEnchantment(enchantment, (Integer) entry.getValue());
                     }
                 }
             }

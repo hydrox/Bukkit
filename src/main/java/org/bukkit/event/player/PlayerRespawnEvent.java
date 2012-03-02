@@ -4,14 +4,13 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
-@SuppressWarnings("serial")
 public class PlayerRespawnEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
     private Location respawnLocation;
-    private boolean isBedSpawn;
+    private final boolean isBedSpawn;
 
-    public PlayerRespawnEvent(Player respawnPlayer, Location respawnLocation, boolean isBedSpawn) {
-        super(Type.PLAYER_RESPAWN, respawnPlayer);
+    public PlayerRespawnEvent(final Player respawnPlayer, final Location respawnLocation, final boolean isBedSpawn) {
+        super(respawnPlayer);
         this.respawnLocation = respawnLocation;
         this.isBedSpawn = isBedSpawn;
     }

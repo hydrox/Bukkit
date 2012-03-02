@@ -1,6 +1,6 @@
 package org.bukkit.plugin.messaging;
 
-import org.bukkit.plugin.messaging.ReservedChannelException;
+import org.bukkit.plugin.TestPlugin;
 import java.util.Collection;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -11,8 +11,9 @@ public class StandardMessengerTest {
         return new StandardMessenger();
     }
 
+    private int count = 0;
     public TestPlugin getPlugin() {
-        return new TestPlugin();
+        return new TestPlugin("" + count++);
     }
 
     @Test

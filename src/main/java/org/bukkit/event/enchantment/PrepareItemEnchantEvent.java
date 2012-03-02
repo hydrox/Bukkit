@@ -3,24 +3,25 @@ package org.bukkit.event.enchantment;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.inventory.InventoryEvent;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
 /**
  * Called when an ItemStack is inserted in an enchantment table - can be called multiple times
  */
-@SuppressWarnings("serial")
-public class PrepareItemEnchantEvent extends Event implements Cancellable {
+public class PrepareItemEnchantEvent extends InventoryEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
-    private Block table;
-    private ItemStack item;
-    private int[] levelsOffered;
-    private int bonus;
+    private final Block table;
+    private final ItemStack item;
+    private final int[] levelsOffered;
+    private final int bonus;
     private boolean cancelled;
-    private Player enchanter;
+    private final Player enchanter;
 
-    public PrepareItemEnchantEvent(Player enchanter, Block table, ItemStack item, int[] levelsOffered, int bonus) {
+    public PrepareItemEnchantEvent(final Player enchanter, InventoryView view, final Block table, final ItemStack item, final int[] levelsOffered, final int bonus) {
+        super(view);
         this.enchanter = enchanter;
         this.table = table;
         this.item = item;
@@ -32,7 +33,7 @@ public class PrepareItemEnchantEvent extends Event implements Cancellable {
     /**
      * Gets the player enchanting the item
      *
-     * @returns enchanting player
+     * @return enchanting player
      */
     public Player getEnchanter() {
         return enchanter;

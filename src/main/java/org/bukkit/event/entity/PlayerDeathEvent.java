@@ -8,7 +8,6 @@ import org.bukkit.inventory.ItemStack;
 /**
  * Thrown whenever a {@link Player} dies
  */
-@SuppressWarnings("serial")
 public class PlayerDeathEvent extends EntityDeathEvent {
     private int newExp = 0;
     private String deathMessage = "";
@@ -16,20 +15,25 @@ public class PlayerDeathEvent extends EntityDeathEvent {
     private int newTotalExp = 0;
     private boolean keepLevel = false;
 
-    public PlayerDeathEvent(Player player, List<ItemStack> drops, int droppedExp, String deathMessage) {
+    public PlayerDeathEvent(final Player player, final List<ItemStack> drops, final int droppedExp, final String deathMessage) {
         this(player, drops, droppedExp, 0, deathMessage);
     }
 
-    public PlayerDeathEvent(Player player, List<ItemStack> drops, int droppedExp, int newExp, String deathMessage) {
+    public PlayerDeathEvent(final Player player, final List<ItemStack> drops, final int droppedExp, final int newExp, final String deathMessage) {
         this(player, drops, droppedExp, newExp, 0, 0, deathMessage);
     }
 
-    public PlayerDeathEvent(Player player, List<ItemStack> drops, int droppedExp, int newExp, int newTotalExp, int newLevel, String deathMessage) {
+    public PlayerDeathEvent(final Player player, final List<ItemStack> drops, final int droppedExp, final int newExp, final int newTotalExp, final int newLevel, final String deathMessage) {
         super(player, drops, droppedExp);
         this.newExp = newExp;
         this.newTotalExp = newTotalExp;
         this.newLevel = newLevel;
         this.deathMessage = deathMessage;
+    }
+
+    @Override
+    public Player getEntity() {
+        return (Player) entity;
     }
 
     /**
@@ -68,7 +72,7 @@ public class PlayerDeathEvent extends EntityDeathEvent {
      * This does not indicate how much EXP should be dropped, please see
      * {@link #setDroppedExp(int)} for that.
      *
-     * @get exp New EXP of the respawned player
+     * @param exp New EXP of the respawned player
      */
     public void setNewExp(int exp) {
         newExp = exp;
@@ -86,7 +90,7 @@ public class PlayerDeathEvent extends EntityDeathEvent {
     /**
      * Sets the Level the Player should have at respawn.
      *
-     * @get level New Level of the respawned player
+     * @param level New Level of the respawned player
      */
     public void setNewLevel(int level) {
         newLevel = level;
@@ -104,7 +108,7 @@ public class PlayerDeathEvent extends EntityDeathEvent {
     /**
      * Sets the Total EXP the Player should have at respawn.
      *
-     * @get totalExp New Total EXP of the respawned player
+     * @param totalExp New Total EXP of the respawned player
      */
     public void setNewTotalExp(int totalExp) {
         newTotalExp = totalExp;
