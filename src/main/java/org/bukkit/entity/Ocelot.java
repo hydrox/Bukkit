@@ -31,6 +31,12 @@ public interface Ocelot extends Animals, Tameable {
         private static final Type[] types = new Type[Type.values().length];
         private final int id;
 
+        static {
+            for (Type type : values()) {
+                types[type.getId()] = type;
+            }
+        }
+
         private Type(int id) {
             this.id = id;
         }
@@ -50,7 +56,7 @@ public interface Ocelot extends Animals, Tameable {
          * @param id ID of the cat type to get.
          * @return Resulting type, or null if not found.
          */
-        public static final Type getType(int id) {
+        public static Type getType(int id) {
             return (id >= types.length) ? null : types[id];
         }
     }
