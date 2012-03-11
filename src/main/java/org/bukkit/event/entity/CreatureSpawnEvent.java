@@ -121,6 +121,18 @@ public class CreatureSpawnEvent extends EntityEvent implements Cancellable {
          */
         BUILD_SNOWMAN,
         /**
+         * When an iron golem is spawned by being built
+         */
+        BUILD_IRONGOLEM,
+        /**
+         * When an iron golem is spawned to defend a village
+         */
+        VILLAGE_DEFENSE,
+        /**
+         * When a zombie is spawned to invade a village
+         */
+        VILLAGE_INVASION,
+        /**
          * When a creature is manually spawned
          */
         CUSTOM

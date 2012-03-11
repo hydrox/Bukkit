@@ -19,11 +19,13 @@ public class ConversationFactory {
 
     protected Plugin plugin;
     protected boolean isModal;
+    protected boolean localEchoEnabled;
     protected ConversationPrefix prefix;
     protected Prompt firstPrompt;
     protected Map<Object, Object> initialSessionData;
     protected String playerOnlyMessage;
     protected List<ConversationCanceller> cancellers;
+    protected List<ConversationAbandonedListener> abandonedListeners;
 
     /**
      * Constructs a ConversationFactory.
@@ -32,11 +34,13 @@ public class ConversationFactory {
     {
         this.plugin = plugin;
         isModal = true;
+        localEchoEnabled = true;
         prefix = new NullConversationPrefix();
         firstPrompt = Prompt.END_OF_CONVERSATION;
         initialSessionData = new HashMap<Object, Object>();
         playerOnlyMessage = null;
         cancellers = new ArrayList<ConversationCanceller>();
+        abandonedListeners = new ArrayList<ConversationAbandonedListener>();
     }
 
     /**
@@ -50,6 +54,17 @@ public class ConversationFactory {
     public ConversationFactory withModality(boolean modal)
     {
         isModal = modal;
+        return this;
+    }
+
+    /**
+     * Sets the local echo status for all {@link Conversation}s created by this factory. If local echo is enabled,
+     * any text submitted to a conversation gets echoed back into the submitter's chat window.
+     * @param localEchoEnabled The status of local echo.
+     * @return This object.
+     */
+    public ConversationFactory withLocalEcho(boolean localEchoEnabled) {
+        this.localEchoEnabled = localEchoEnabled;
         return this;
     }
 
@@ -129,13 +144,23 @@ public class ConversationFactory {
     }
 
     /**
+     * Adds a {@link ConversationAbandonedListener} to all conversations constructed by this factory.
+     * @param listener The listener to add.
+     * @return This object.
+     */
+    public ConversationFactory addConversationAbandonedListener(ConversationAbandonedListener listener) {
+        abandonedListeners.add(listener);
+        return this;
+    }
+
+    /**
      * Constructs a {@link Conversation} in accordance with the defaults set for this factory.
      * @param forWhom The entity for whom the new conversation is mediating.
      * @return A new conversation.
      */
     public Conversation buildConversation(Conversable forWhom) {
         //Abort conversation construction if we aren't supposed to talk to non-players
-        if(playerOnlyMessage != null && !(forWhom instanceof Player)) {
+        if (playerOnlyMessage != null && !(forWhom instanceof Player)) {
             return new Conversation(plugin, forWhom, new NotPlayerMessagePrompt());
         }
 
@@ -146,11 +171,17 @@ public class ConversationFactory {
         //Build and return a conversation
         Conversation conversation = new Conversation(plugin, forWhom, firstPrompt, copiedInitialSessionData);
         conversation.setModal(isModal);
+        conversation.setLocalEchoEnabled(localEchoEnabled);
         conversation.setPrefix(prefix);
 
         //Clone the conversation cancellers
-        for(ConversationCanceller canceller : cancellers) {
+        for (ConversationCanceller canceller : cancellers) {
             conversation.addConversationCanceller(canceller.clone());
+        }
+        
+        //Add the ConversationAbandonedListeners
+        for (ConversationAbandonedListener listener : abandonedListeners) {
+            conversation.addConversationAbandonedListener(listener);
         }
 
         return conversation;

@@ -1,6 +1,5 @@
 package org.bukkit.conversations;
 
-import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
@@ -34,8 +33,10 @@ public class Conversation {
     protected Prompt currentPrompt;
     protected ConversationContext context;
     protected boolean modal;
+    protected boolean localEchoEnabled;
     protected ConversationPrefix prefix;
     protected List<ConversationCanceller> cancellers;
+    protected List<ConversationAbandonedListener> abandonedListeners;
 
     /**
      * Initializes a new Conversation.
@@ -58,8 +59,10 @@ public class Conversation {
         this.firstPrompt = firstPrompt;
         this.context = new ConversationContext(plugin, forWhom, initialSessionData);
         this.modal = true;
+        this.localEchoEnabled = true;
         this.prefix = new NullConversationPrefix();
         this.cancellers = new ArrayList<ConversationCanceller>();
+        this.abandonedListeners = new ArrayList<ConversationAbandonedListener>();
     }
 
     /**
@@ -86,6 +89,24 @@ public class Conversation {
      */
     void setModal(boolean modal) {
         this.modal = modal;
+    }
+
+    /**
+     * Gets the status of local echo for this conversation. If local echo is enabled, any text submitted to a conversation
+     * gets echoed back into the submitter's chat window.
+     * @return The status of local echo.
+     */
+    public boolean isLocalEchoEnabled() {
+        return localEchoEnabled;
+    }
+
+    /**
+     * Sets the status of local echo for this conversation. If local echo is enabled, any text submitted to a conversation
+     * gets echoed back into the submitter's chat window.
+     * @param localEchoEnabled The status of local echo.
+     */
+    public void setLocalEchoEnabled(boolean localEchoEnabled) {
+        this.localEchoEnabled = localEchoEnabled;
     }
 
     /**
@@ -163,12 +184,14 @@ public class Conversation {
         if (currentPrompt != null) {
 
             // Echo the user's input
-            context.getForWhom().sendRawMessage(prefix.getPrefix(context) + input);
+            if (localEchoEnabled) {
+                context.getForWhom().sendRawMessage(prefix.getPrefix(context) + input);
+            }
 
             // Test for conversation abandonment based on input
             for(ConversationCanceller canceller : cancellers) {
                 if (canceller.cancelBasedOnInput(context, input)) {
-                    abandon();
+                    abandon(new ConversationAbandonedEvent(this, canceller));
                     return;
                 }
             }
@@ -180,13 +203,40 @@ public class Conversation {
     }
 
     /**
+     * Adds a {@link ConversationAbandonedListener}.
+     * @param listener The listener to add.
+     */
+    public synchronized void addConversationAbandonedListener(ConversationAbandonedListener listener) {
+        abandonedListeners.add(listener);
+    }
+
+    /**
+     * Removes a {@link ConversationAbandonedListener}.
+     * @param listener The listener to remove.
+     */
+    public synchronized void removeConversationAbandonedListener(ConversationAbandonedListener listener) {
+        abandonedListeners.remove(listener);
+    }
+
+    /**
      * Abandons and resets the current conversation. Restores the user's normal chat behavior.
      */
     public void abandon() {
+        abandon(new ConversationAbandonedEvent(this, new ManuallyAbandonedConversationCanceller()));
+    }
+
+    /**
+     * Abandons and resets the current conversation. Restores the user's normal chat behavior.
+     * @param details Details about why the conversation was abandoned
+     */
+    public synchronized void abandon(ConversationAbandonedEvent details) {
         if (!abandoned) {
             abandoned = true;
             currentPrompt = null;
             context.getForWhom().abandonConversation(this);
+            for (ConversationAbandonedListener listener : abandonedListeners) {
+                listener.conversationAbandoned(details);
+            }
         }
     }
 
@@ -195,7 +245,7 @@ public class Conversation {
      */
     public void outputNextPrompt() {
         if (currentPrompt == null) {
-            abandon();
+            abandon(new ConversationAbandonedEvent(this));
         } else {
             context.getForWhom().sendRawMessage(prefix.getPrefix(context) + currentPrompt.getPromptText(context));
             if (!currentPrompt.blocksForInput(context)) {
