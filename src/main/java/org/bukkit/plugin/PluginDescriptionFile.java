@@ -25,6 +25,7 @@ public final class PluginDescriptionFile {
     private String classLoaderOf = null;
     private List<String> depend = null;
     private List<String> softDepend = null;
+    private List<String> loadBefore = null;
     private String version = null;
     private Map<String, Map<String, Object>> commands = null;
     private String description = null;
@@ -34,6 +35,7 @@ public final class PluginDescriptionFile {
     private boolean database = false;
     private PluginLoadOrder order = PluginLoadOrder.POSTWORLD;
     private List<Permission> permissions = null;
+    private Map<?, ?> lazyPermissions = null;
     private PermissionDefault defaultPerm = PermissionDefault.OP;
 
     public PluginDescriptionFile(final InputStream stream) throws InvalidDescriptionException {
@@ -120,6 +122,14 @@ public final class PluginDescriptionFile {
         return softDepend;
     }
 
+    /**
+     * Gets the list of plugins that should consider this plugin a soft-dependency
+     * @return immutable list of plugins that should consider this plugin a soft-dependency
+     */
+    public List<String> getLoadBefore() {
+        return loadBefore;
+    }
+
     public PluginLoadOrder getLoad() {
         return order;
     }
@@ -150,6 +160,14 @@ public final class PluginDescriptionFile {
     }
 
     public List<Permission> getPermissions() {
+        if (permissions == null) {
+            if (lazyPermissions == null) {
+                permissions = ImmutableList.<Permission>of();
+            } else {
+                permissions = ImmutableList.copyOf(Permission.loadPermissions(lazyPermissions, "Permission node '%s' in plugin description file for " + getFullName() + " is invalid", defaultPerm));
+                lazyPermissions = null;
+            }
+        }
         return permissions;
     }
 
@@ -202,24 +220,26 @@ public final class PluginDescriptionFile {
             try {
                 for (Map.Entry<?, ?> command : ((Map<?, ?>) map.get("commands")).entrySet()) {
                     ImmutableMap.Builder<String, Object> commandBuilder = ImmutableMap.<String, Object>builder();
-                    for (Map.Entry<?, ?> commandEntry : ((Map<?, ?>) command.getValue()).entrySet()) {
-                        if (commandEntry.getValue() instanceof Iterable) {
-                            // This prevents internal alias list changes
-                            ImmutableList.Builder<Object> commandSubList = ImmutableList.<Object>builder();
-                            for (Object commandSubListItem : (Iterable<?>) commandEntry.getValue()) {
-                                commandSubList.add(commandSubListItem);
+                    if (command.getValue() != null) {
+                        for (Map.Entry<?, ?> commandEntry : ((Map<?, ?>) command.getValue()).entrySet()) {
+                            if (commandEntry.getValue() instanceof Iterable) {
+                                // This prevents internal alias list changes
+                                ImmutableList.Builder<Object> commandSubList = ImmutableList.<Object>builder();
+                                for (Object commandSubListItem : (Iterable<?>) commandEntry.getValue()) {
+                                    if (commandSubListItem != null) {
+                                        commandSubList.add(commandSubListItem);
+                                    }
+                                }
+                                commandBuilder.put(commandEntry.getKey().toString(), commandSubList.build());
+                            } else if (commandEntry.getValue() != null) {
+                                commandBuilder.put(commandEntry.getKey().toString(), commandEntry.getValue());
                             }
-                            commandBuilder.put(commandEntry.getKey().toString(), commandSubList.build());
-                        } else if (commandEntry.getValue() != null) {
-                            commandBuilder.put(commandEntry.getKey().toString(), commandEntry.getValue());
                         }
                     }
                     commandsBuilder.put(command.getKey().toString(), commandBuilder.build());
                 }
             } catch (ClassCastException ex) {
                 throw new InvalidDescriptionException(ex, "commands are of wrong type");
-            } catch (NullPointerException ex) {
-                throw new InvalidDescriptionException(ex, "commands are not properly defined");
             }
             commands = commandsBuilder.build();
         }
@@ -254,6 +274,20 @@ public final class PluginDescriptionFile {
                 throw new InvalidDescriptionException(ex, "invalid soft-dependency format");
             }
             softDepend = softDependBuilder.build();
+        }
+
+        if (map.get("loadbefore") != null) {
+            ImmutableList.Builder<String> loadBeforeBuilder = ImmutableList.<String>builder();
+            try {
+                for (Object predependency : (Iterable<?>) map.get("loadbefore")) {
+                    loadBeforeBuilder.add(predependency.toString());
+                }
+            } catch (ClassCastException ex) {
+                throw new InvalidDescriptionException(ex, "loadbefore is of wrong type");
+            } catch (NullPointerException ex) {
+                throw new InvalidDescriptionException(ex, "invalid load-before format");
+            }
+            loadBefore = loadBeforeBuilder.build();
         }
 
         if (map.get("database") != null) {
@@ -313,18 +347,10 @@ public final class PluginDescriptionFile {
             }
         }
 
-        if (map.get("permissions") != null) {
-            try {
-                Map<?, ?> perms = (Map<?, ?>) map.get("permissions");
-
-                permissions = ImmutableList.copyOf(Permission.loadPermissions(perms, "Permission node '%s' in plugin description file for " + getFullName() + " is invalid", defaultPerm));
-            } catch (ClassCastException ex) {
-                throw new InvalidDescriptionException(ex, "permissions are of wrong type");
-            } catch (NullPointerException ex) {
-                throw new InvalidDescriptionException(ex, "permissions are not properly defined");
-            }
-        } else {
-            permissions = ImmutableList.<Permission>of();
+        try {
+            lazyPermissions = (Map<?, ?>) map.get("permissions");
+        } catch (ClassCastException ex) {
+            throw new InvalidDescriptionException(ex, "permissions are of the wrong type");
         }
 
         if (map.get("prefix") != null) {
