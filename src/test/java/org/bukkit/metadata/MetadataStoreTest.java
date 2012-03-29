@@ -97,6 +97,15 @@ public class MetadataStoreTest {
     }
 
     @Test
+    public void testMetadataRemoveLast() {
+        subject.setMetadata("subject", "key", new FixedMetadataValue(pluginX, 10));
+        subject.removeMetadata("subject", "key", pluginX);
+
+        assertFalse(subject.hasMetadata("subject", "key"));
+        assertEquals(0, subject.getMetadata("subject", "key").size());
+    }
+
+    @Test
     public void testMetadataRemoveForNonExistingPlugin() {
         subject.setMetadata("subject", "key", new FixedMetadataValue(pluginX, 10));
         subject.removeMetadata("subject", "key", pluginY);
@@ -104,6 +113,13 @@ public class MetadataStoreTest {
         assertTrue(subject.hasMetadata("subject", "key"));
         assertEquals(1, subject.getMetadata("subject", "key").size());
         assertEquals(10, subject.getMetadata("subject", "key").get(0).value());
+    }
+    
+    @Test
+    public void testHasMetadata() {
+        subject.setMetadata("subject", "key", new FixedMetadataValue(pluginX, 10));
+        assertTrue(subject.hasMetadata("subject", "key"));
+        assertFalse(subject.hasMetadata("subject", "otherKey"));
     }
 
     private class StringMetadataStore extends MetadataStoreBase<String> implements MetadataStore<String> {
