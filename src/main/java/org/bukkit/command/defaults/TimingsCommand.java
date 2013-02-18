@@ -10,6 +10,7 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.event.CustomTimingsHandler;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
@@ -22,6 +23,7 @@ import com.google.common.collect.ImmutableList;
 public class TimingsCommand extends BukkitCommand {
     private static final List<String> TIMINGS_SUBCOMMANDS = ImmutableList.of("merged", "reset", "separate");
 
+    public static long timingStart =  0; // Spigot
     public TimingsCommand(String name) {
         super(name);
         this.description = "Records timings for all plugin events";
@@ -50,9 +52,12 @@ public class TimingsCommand extends BukkitCommand {
                     }
                 }
             }
+            CustomTimingsHandler.reload(); // Spigot
+            timingStart = System.nanoTime(); // Spigot
             sender.sendMessage("Timings reset");
         } else if ("merged".equals(args[0]) || separate) {
 
+            long sampleTime = System.nanoTime() - timingStart; // Spigot
             int index = 0;
             int pluginIdx = 0;
             File timingFolder = new File("timings");
@@ -92,7 +97,10 @@ public class TimingsCommand extends BukkitCommand {
                     }
                     fileTimings.println("    Total time " + totalTime + " (" + totalTime / 1000000000 + "s)");
                 }
+                CustomTimingsHandler.printTimings(fileTimings); // Spigot
+                fileTimings.println("Sample time " + sampleTime + " (" + sampleTime / 1000000000 + "s)"); // Spigot
                 sender.sendMessage("Timings written to " + timings.getPath());
+                sender.sendMessage("Paste contents of file into form at http://aikar.co/timings.php to read results."); // Spigot
                 if (separate) sender.sendMessage("Names written to " + names.getPath());
             } catch (IOException e) {
             } finally {
