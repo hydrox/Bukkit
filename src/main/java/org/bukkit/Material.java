@@ -29,6 +29,7 @@ import org.bukkit.material.LongGrass;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.MonsterEggs;
 import org.bukkit.material.Mushroom;
+import org.bukkit.material.NetherWarts;
 import org.bukkit.material.PistonBaseMaterial;
 import org.bukkit.material.PistonExtensionMaterial;
 import org.bukkit.material.PoweredRail;
@@ -176,7 +177,7 @@ public enum Material {
     NETHER_BRICK(112),
     NETHER_FENCE(113),
     NETHER_BRICK_STAIRS(114, Stairs.class),
-    NETHER_WARTS(115, MaterialData.class),
+    NETHER_WARTS(115, NetherWarts.class),
     ENCHANTMENT_TABLE(116),
     BREWING_STAND(117, MaterialData.class),
     CAULDRON(118, Cauldron.class),
@@ -946,6 +947,23 @@ public enum Material {
             case QUARTZ_ORE:
             case QUARTZ_BLOCK:
             case DROPPER:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * @return True if this material is affected by gravity.
+     */
+    public boolean hasGravity() {
+        if (!isBlock()) {
+            return false;
+        }
+        switch (this) {
+            case SAND:
+            case GRAVEL:
+            case ANVIL:
                 return true;
             default:
                 return false;
