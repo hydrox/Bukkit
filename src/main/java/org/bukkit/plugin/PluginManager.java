@@ -25,7 +25,7 @@ public interface PluginManager {
 
     /**
      * Checks if the given plugin is loaded and returns it when applicable
-     * <p />
+     * <p>
      * Please note that the name of the plugin is case-sensitive
      *
      * @param name Name of the plugin to check
@@ -42,7 +42,7 @@ public interface PluginManager {
 
     /**
      * Checks if the given plugin is enabled or not
-     * <p />
+     * <p>
      * Please note that the name of the plugin is case-sensitive.
      *
      * @param name Name of the plugin to check
@@ -60,7 +60,7 @@ public interface PluginManager {
 
     /**
      * Loads the plugin in the specified file
-     * <p />
+     * <p>
      * File must be valid according to the current enabled Plugin interfaces
      *
      * @param file File containing the plugin to load
@@ -132,7 +132,7 @@ public interface PluginManager {
 
     /**
      * Enables the specified plugin
-     * <p />
+     * <p>
      * Attempting to enable a plugin that is already enabled will have no effect
      *
      * @param plugin Plugin to enable
@@ -141,7 +141,7 @@ public interface PluginManager {
 
     /**
      * Disables the specified plugin
-     * <p />
+     * <p>
      * Attempting to disable a plugin that is not enabled will have no effect
      *
      * @param plugin Plugin to disable
@@ -158,7 +158,7 @@ public interface PluginManager {
 
     /**
      * Adds a {@link Permission} to this plugin manager.
-     * <p />
+     * <p>
      * If a permission is already defined with the given name of the new permission,
      * an exception will be thrown.
      *
@@ -169,9 +169,9 @@ public interface PluginManager {
 
     /**
      * Removes a {@link Permission} registration from this plugin manager.
-     * <p />
+     * <p>
      * If the specified permission does not exist in this plugin manager, nothing will happen.
-     * <p />
+     * <p>
      * Removing a permission registration will <b>not</b> remove the permission from any {@link Permissible}s that have it.
      *
      * @param perm Permission to remove
@@ -180,9 +180,9 @@ public interface PluginManager {
 
     /**
      * Removes a {@link Permission} registration from this plugin manager.
-     * <p />
+     * <p>
      * If the specified permission does not exist in this plugin manager, nothing will happen.
-     * <p />
+     * <p>
      * Removing a permission registration will <b>not</b> remove the permission from any {@link Permissible}s that have it.
      *
      * @param name Permission to remove
@@ -199,7 +199,7 @@ public interface PluginManager {
 
     /**
      * Recalculates the defaults for the given {@link Permission}.
-     * <p />
+     * <p>
      * This will have no effect if the specified permission is not registered here.
      *
      * @param perm Permission to recalculate
@@ -208,7 +208,7 @@ public interface PluginManager {
 
     /**
      * Subscribes the given Permissible for information about the requested Permission, by name.
-     * <p />
+     * <p>
      * If the specified Permission changes in any form, the Permissible will be asked to recalculate.
      *
      * @param permission Permission to subscribe to
@@ -234,7 +234,7 @@ public interface PluginManager {
 
     /**
      * Subscribes to the given Default permissions by operator status
-     * <p />
+     * <p>
      * If the specified defaults change in any form, the Permissible will be asked to recalculate.
      *
      * @param op Default list to subscribe to
@@ -260,7 +260,7 @@ public interface PluginManager {
 
     /**
      * Gets a set of all registered permissions.
-     * <p />
+     * <p>
      * This set is a copy and will not be modified live.
      *
      * @return Set containing all current registered permissions

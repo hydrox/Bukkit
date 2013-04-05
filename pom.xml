@@ -3,7 +3,7 @@
 
     <groupId>org.spigotmc</groupId>
     <artifactId>spigot-api</artifactId>
-    <version>1.5.1-R0.1-hydrox-SNAPSHOT</version>
+    <version>1.5.1-R0.2-hydrox-SNAPSHOT</version>
     <name>Spigot-API</name>
     <url>http://www.spigotmc.org</url>
 
