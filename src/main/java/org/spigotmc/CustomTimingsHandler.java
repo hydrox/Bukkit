@@ -171,4 +171,8 @@ public class CustomTimingsHandler
         curTickTotal = 0;
         totalTime = 0;
     }
+
+    public long getCurTickTotal() {
+        return curTickTotal;
+    }
 }
