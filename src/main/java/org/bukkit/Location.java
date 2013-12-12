@@ -167,79 +167,45 @@ public class Location implements Cloneable {
     }
 
     /**
-     * Sets the yaw of this location, measured in degrees.
-     * <ul>
-     * <li>A yaw of 0 or 360 represents the positive z direction.
-     * <li>A yaw of 180 represents the negative z direction.
-     * <li>A yaw of 90 represents the negative x direction.
-     * <li>A yaw of 270 represents the positive x direction.
-     * </ul>
-     * Increasing yaw values are the equivalent of turning to your
-     * right-facing, increasing the scale of the next respective axis, and
-     * decreasing the scale of the previous axis.
+     * Sets the yaw of this location
      *
-     * @param yaw new rotation's yaw
+     * @param yaw New yaw
      */
     public void setYaw(float yaw) {
         this.yaw = yaw;
     }
 
     /**
-     * Gets the yaw of this location, measured in degrees.
-     * <ul>
-     * <li>A yaw of 0 or 360 represents the positive z direction.
-     * <li>A yaw of 180 represents the negative z direction.
-     * <li>A yaw of 90 represents the negative x direction.
-     * <li>A yaw of 270 represents the positive x direction.
-     * </ul>
-     * Increasing yaw values are the equivalent of turning to your
-     * right-facing, increasing the scale of the next respective axis, and
-     * decreasing the scale of the previous axis.
+     * Gets the yaw of this location
      *
-     * @return the rotation's yaw
+     * @return Yaw
      */
     public float getYaw() {
         return yaw;
     }
 
     /**
-     * Sets the pitch of this location, measured in degrees.
-     * <ul>
-     * <li>A pitch of 0 represents level forward facing.
-     * <li>A pitch of 90 represents downward facing, or negative y
-     *     direction.
-     * <li>A pitch of -90 represents upward facing, or positive y direction.
-     * <ul>
-     * Increasing pitch values the equivalent of looking down.
+     * Sets the pitch of this location
      *
-     * @param pitch new incline's pitch
+     * @param pitch New pitch
      */
     public void setPitch(float pitch) {
         this.pitch = pitch;
     }
 
     /**
-     * Sets the pitch of this location, measured in degrees.
-     * <ul>
-     * <li>A pitch of 0 represents level forward facing.
-     * <li>A pitch of 90 represents downward facing, or negative y
-     *     direction.
-     * <li>A pitch of -90 represents upward facing, or positive y direction.
-     * <ul>
-     * Increasing pitch values the equivalent of looking down.
+     * Gets the pitch of this location
      *
-     * @return the incline's pitch
+     * @return Pitch
      */
     public float getPitch() {
         return pitch;
     }
 
     /**
-     * Gets a unit-vector pointing in the direction that this Location is
-     * facing.
+     * Gets a Vector pointing in the direction that this Location is facing
      *
-     * @return a vector pointing the direction of this location's {@link
-     *     #getPitch() pitch} and {@link #getYaw() yaw}
+     * @return Vector
      */
     public Vector getDirection() {
         Vector vector = new Vector();
@@ -249,45 +215,12 @@ public class Location implements Cloneable {
 
         vector.setY(-Math.sin(Math.toRadians(rotY)));
 
-        double xz = Math.cos(Math.toRadians(rotY));
+        double h = Math.cos(Math.toRadians(rotY));
 
-        vector.setX(-xz * Math.sin(Math.toRadians(rotX)));
-        vector.setZ(xz * Math.cos(Math.toRadians(rotX)));
+        vector.setX(-h * Math.sin(Math.toRadians(rotX)));
+        vector.setZ(h * Math.cos(Math.toRadians(rotX)));
 
         return vector;
-    }
-
-    /**
-     * Sets the {@link #getYaw() yaw} and {@link #getPitch() pitch} to point
-     * in the direction of the vector.
-     */
-    public Location setDirection(Vector vector) {
-        /*
-         * Sin = Opp / Hyp
-         * Cos = Adj / Hyp
-         * Tan = Opp / Adj
-         *
-         * x = -Opp
-         * z = Adj
-         */
-        final double _2PI = 2 * Math.PI;
-        final double x = vector.getX();
-        final double z = vector.getZ();
-
-        if (x == 0 && z == 0) {
-            pitch = vector.getY() > 0 ? -90 : 90;
-            return this;
-        }
-
-        double theta = Math.atan2(-x, z);
-        yaw = (float) Math.toDegrees((theta + _2PI) % _2PI);
-
-        double x2 = NumberConversions.square(x);
-        double z2 = NumberConversions.square(z);
-        double xz = Math.sqrt(x2 + z2);
-        pitch = (float) Math.toDegrees(Math.atan(-vector.getY() / xz));
-
-        return this;
     }
 
     /**
