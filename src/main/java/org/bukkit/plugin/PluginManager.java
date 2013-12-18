@@ -19,7 +19,8 @@ public interface PluginManager {
      * Registers the specified plugin loader
      *
      * @param loader Class name of the PluginLoader to register
-     * @throws IllegalArgumentException Thrown when the given Class is not a valid PluginLoader
+     * @throws IllegalArgumentException Thrown when the given Class is not a
+     *     valid PluginLoader
      */
     public void registerInterface(Class<? extends PluginLoader> loader) throws IllegalArgumentException;
 
@@ -65,9 +66,12 @@ public interface PluginManager {
      *
      * @param file File containing the plugin to load
      * @return The Plugin loaded, or null if it was invalid
-     * @throws InvalidPluginException Thrown when the specified file is not a valid plugin
-     * @throws InvalidDescriptionException Thrown when the specified file contains an invalid description
-     * @throws UnknownDependencyException If a required dependency could not be resolved
+     * @throws InvalidPluginException Thrown when the specified file is not a
+     *     valid plugin
+     * @throws InvalidDescriptionException Thrown when the specified file
+     *     contains an invalid description
+     * @throws UnknownDependencyException If a required dependency could not
+     *     be resolved
      */
     public Plugin loadPlugin(File file) throws InvalidPluginException, InvalidDescriptionException, UnknownDependencyException;
 
@@ -93,9 +97,11 @@ public interface PluginManager {
      * Calls an event with the given details
      *
      * @param event Event details
-     * @throws IllegalStateException Thrown when an asynchronous event is fired from synchronous code.<br>
-     *          <i>Note: This is best-effort basis, and should not be used to test synchronized state. This
-     *          is an indicator for flawed flow logic.</i>
+     * @throws IllegalStateException Thrown when an asynchronous event is
+     *     fired from synchronous code.
+     *     <p>
+     *     <i>Note: This is best-effort basis, and should not be used to test
+     *     synchronized state. This is an indicator for flawed flow logic.</i>
      */
     public void callEvent(Event event) throws IllegalStateException;
 
@@ -133,7 +139,8 @@ public interface PluginManager {
     /**
      * Enables the specified plugin
      * <p>
-     * Attempting to enable a plugin that is already enabled will have no effect
+     * Attempting to enable a plugin that is already enabled will have no
+     * effect
      *
      * @param plugin Plugin to enable
      */
@@ -159,20 +166,23 @@ public interface PluginManager {
     /**
      * Adds a {@link Permission} to this plugin manager.
      * <p>
-     * If a permission is already defined with the given name of the new permission,
-     * an exception will be thrown.
+     * If a permission is already defined with the given name of the new
+     * permission, an exception will be thrown.
      *
      * @param perm Permission to add
-     * @throws IllegalArgumentException Thrown when a permission with the same name already exists
+     * @throws IllegalArgumentException Thrown when a permission with the same
+     *     name already exists
      */
     public void addPermission(Permission perm);
 
     /**
      * Removes a {@link Permission} registration from this plugin manager.
      * <p>
-     * If the specified permission does not exist in this plugin manager, nothing will happen.
+     * If the specified permission does not exist in this plugin manager,
+     * nothing will happen.
      * <p>
-     * Removing a permission registration will <b>not</b> remove the permission from any {@link Permissible}s that have it.
+     * Removing a permission registration will <b>not</b> remove the
+     * permission from any {@link Permissible}s that have it.
      *
      * @param perm Permission to remove
      */
@@ -181,9 +191,11 @@ public interface PluginManager {
     /**
      * Removes a {@link Permission} registration from this plugin manager.
      * <p>
-     * If the specified permission does not exist in this plugin manager, nothing will happen.
+     * If the specified permission does not exist in this plugin manager,
+     * nothing will happen.
      * <p>
-     * Removing a permission registration will <b>not</b> remove the permission from any {@link Permissible}s that have it.
+     * Removing a permission registration will <b>not</b> remove the
+     * permission from any {@link Permissible}s that have it.
      *
      * @param name Permission to remove
      */
@@ -200,16 +212,19 @@ public interface PluginManager {
     /**
      * Recalculates the defaults for the given {@link Permission}.
      * <p>
-     * This will have no effect if the specified permission is not registered here.
+     * This will have no effect if the specified permission is not registered
+     * here.
      *
      * @param perm Permission to recalculate
      */
     public void recalculatePermissionDefaults(Permission perm);
 
     /**
-     * Subscribes the given Permissible for information about the requested Permission, by name.
+     * Subscribes the given Permissible for information about the requested
+     * Permission, by name.
      * <p>
-     * If the specified Permission changes in any form, the Permissible will be asked to recalculate.
+     * If the specified Permission changes in any form, the Permissible will
+     * be asked to recalculate.
      *
      * @param permission Permission to subscribe to
      * @param permissible Permissible subscribing
@@ -217,7 +232,8 @@ public interface PluginManager {
     public void subscribeToPermission(String permission, Permissible permissible);
 
     /**
-     * Unsubscribes the given Permissible for information about the requested Permission, by name.
+     * Unsubscribes the given Permissible for information about the requested
+     * Permission, by name.
      *
      * @param permission Permission to unsubscribe from
      * @param permissible Permissible subscribing
@@ -225,7 +241,8 @@ public interface PluginManager {
     public void unsubscribeFromPermission(String permission, Permissible permissible);
 
     /**
-     * Gets a set containing all subscribed {@link Permissible}s to the given permission, by name
+     * Gets a set containing all subscribed {@link Permissible}s to the given
+     * permission, by name
      *
      * @param permission Permission to query for
      * @return Set containing all subscribed permissions
@@ -235,7 +252,8 @@ public interface PluginManager {
     /**
      * Subscribes to the given Default permissions by operator status
      * <p>
-     * If the specified defaults change in any form, the Permissible will be asked to recalculate.
+     * If the specified defaults change in any form, the Permissible will be
+     * asked to recalculate.
      *
      * @param op Default list to subscribe to
      * @param permissible Permissible subscribing
@@ -251,7 +269,8 @@ public interface PluginManager {
     public void unsubscribeFromDefaultPerms(boolean op, Permissible permissible);
 
     /**
-     * Gets a set containing all subscribed {@link Permissible}s to the given default list, by op status
+     * Gets a set containing all subscribed {@link Permissible}s to the given
+     * default list, by op status
      *
      * @param op Default list to query for
      * @return Set containing all subscribed permissions
