@@ -54,8 +54,9 @@ public class ConversationContext {
     }
 
     /**
-     * Gets session data shared between all {@link Prompt} invocations. Use this as a way
-     * to pass data through each Prompt as the conversation develops.
+     * Gets session data shared between all {@link Prompt} invocations. Use
+     * this as a way to pass data through each Prompt as the conversation
+     * develops.
      *
      * @param key The session data key.
      * @return The requested session data.
