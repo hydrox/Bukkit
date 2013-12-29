@@ -214,7 +214,7 @@ public enum Effect {
      * The particles generated while breaking a block.
      * This particle requires a Material and data value so that the client can select the correct texture.
      */
-    TILE_BREAK("tilecrack", Type.PARTICLE, MaterialData.class);
+    TILE_BREAK("blockcrack", Type.PARTICLE, MaterialData.class);
 
     private final int id;
     private final Type type;
