@@ -46,7 +46,7 @@ public class PlayerLoginEvent extends PlayerEvent {
         this.hostname = hostname;
         this.address = address;
         // Spigot start
-        this.realAddress = address;
+        this.realAddress = realAddress;
     }
 
     public PlayerLoginEvent(final Player player, final String hostname, final InetAddress address) {
