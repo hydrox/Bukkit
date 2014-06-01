@@ -194,6 +194,13 @@ public final class Bukkit {
     }
 
     /**
+     * @see Server#getPlayer(java.util.UUID)
+     */
+    public static Player getPlayer(UUID id) {
+        return server.getPlayer(id);
+    }
+
+    /**
      * @see Server#getPluginManager()
      */
     public static PluginManager getPluginManager() {
@@ -408,13 +415,22 @@ public final class Bukkit {
     /**
      * @see Server#getOfflinePlayer(String name)
      */
+    @Deprecated
     public static OfflinePlayer getOfflinePlayer(String name) {
         return server.getOfflinePlayer(name);
     }
 
     /**
+     * @see Server#getOfflinePlayer(java.util.UUID)
+     */
+    public static OfflinePlayer getOfflinePlayer(UUID id) {
+        return server.getOfflinePlayer(id);
+    }
+
+    /**
      * @see Server#getPlayerExact(String name)
      */
+    @Deprecated
     public static Player getPlayerExact(String name) {
         return server.getPlayerExact(name);
     }
@@ -571,6 +587,13 @@ public final class Bukkit {
      */
     public static Inventory createInventory(InventoryHolder owner, InventoryType type) {
         return server.createInventory(owner, type);
+    }
+
+    /**
+     * @see Server#createInventory(InventoryHolder owner, InventoryType type, String title)
+     */
+    public static Inventory createInventory(InventoryHolder owner, InventoryType type, String title) {
+        return server.createInventory(owner, type, title);
     }
 
     /**

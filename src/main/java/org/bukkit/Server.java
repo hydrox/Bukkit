@@ -294,6 +294,14 @@ public interface Server extends PluginMessageRecipient {
     public List<Player> matchPlayer(String name);
 
     /**
+     * Gets the player with the given UUID.
+     *
+     * @param id UUID of the player to retrieve
+     * @return a player object if one was found, null otherwise
+     */
+    public Player getPlayer(UUID id);
+
+    /**
      * Gets the plugin manager for interfacing with plugins.
      *
      * @return a plugin manager for this Server instance
@@ -541,13 +549,32 @@ public interface Server extends PluginMessageRecipient {
      * Gets the player by the given name, regardless if they are offline or
      * online.
      * <p>
+     * This method may involve a blocking web request to get the UUID for the
+     * given name.
+     * <p>
      * This will return an object even if the player does not exist. To this
      * method, all players will exist.
      *
+     * @deprecated Persistent storage of users should be by UUID as names are no longer
+     *             unique past a single session.
      * @param name the name the player to retrieve
      * @return an offline player
+     * @see #getOfflinePlayer(java.util.UUID)
      */
+    @Deprecated
     public OfflinePlayer getOfflinePlayer(String name);
+
+    /**
+     * Gets the player by the given UUID, regardless if they are offline or
+     * online.
+     * <p>
+     * This will return an object even if the player does not exist. To this
+     * method, all players will exist.
+     *
+     * @param id the UUID of the player to retrieve
+     * @return an offline player
+     */
+    public OfflinePlayer getOfflinePlayer(UUID id);
 
     /**
      * Gets a set containing all current IPs that are banned.
@@ -579,6 +606,9 @@ public interface Server extends PluginMessageRecipient {
 
     /**
      * Gets a ban list for the supplied type.
+     * <p>
+     * Bans by name are no longer supported and this method will return
+     * null when trying to request them. The replacement is bans by UUID.
      *
      * @param type the type of list to fetch, cannot be null
      * @return a ban list of the specified type
@@ -652,6 +682,20 @@ public interface Server extends PluginMessageRecipient {
      * @return a new inventory
      */
     Inventory createInventory(InventoryHolder owner, InventoryType type);
+
+    /**
+     * Creates an empty inventory with the specified type and title. If the type
+     * is {@link InventoryType#CHEST}, the new inventory has a size of 27;
+     * otherwise the new inventory has the normal size for its type.<br />
+     * It should be noted that some inventory types do not support titles and
+     * may not render with said titles on the Minecraft client.
+     *
+     * @param owner The holder of the inventory; can be null if there's no holder.
+     * @param type The type of inventory to create.
+     * @param title The title of the inventory, to be displayed when it is viewed.
+     * @return The new inventory.
+     */
+    Inventory createInventory(InventoryHolder owner, InventoryType type, String title);
 
     /**
      * Creates an empty inventory of type {@link InventoryType#CHEST} with the
