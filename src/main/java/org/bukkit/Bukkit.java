@@ -445,7 +445,6 @@ public final class Bukkit {
     /**
      * @see Server#getPlayerExact(String name)
      */
-    @Deprecated
     public static Player getPlayerExact(String name) {
         return server.getPlayerExact(name);
     }
